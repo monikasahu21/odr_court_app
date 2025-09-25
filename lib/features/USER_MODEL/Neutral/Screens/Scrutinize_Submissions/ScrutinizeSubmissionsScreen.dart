@@ -1,122 +1,144 @@
 import 'package:flutter/material.dart';
 import 'package:odr_court_app/features/auth/Reusable_Widget/app_color.dart';
 
-/// 🔹 Neutral Dashboard - Scrutinize Submissions
-class ScrutinizeSubmissionsScreen extends StatelessWidget {
+class ScrutinizeSubmissionsScreen extends StatefulWidget {
   const ScrutinizeSubmissionsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // ⚡ Dummy Data (replace with API/DB integration)
-    final submissions = [
-      {
-        "caseId": "Case #2024-101",
-        "party": "Claimant: Amit Sharma",
-        "docName": "Evidence Document.pdf",
-        "date": "22 Sep 2025",
-        "status": "Pending"
-      },
-      {
-        "caseId": "Case #2024-102",
-        "party": "Respondent: XYZ Pvt Ltd",
-        "docName": "Reply Statement.docx",
-        "date": "21 Sep 2025",
-        "status": "Pending"
-      },
-      {
-        "caseId": "Case #2024-103",
-        "party": "Claimant: Riya Patel",
-        "docName": "Additional Evidence.zip",
-        "date": "19 Sep 2025",
-        "status": "Approved"
-      },
-    ];
+  State<ScrutinizeSubmissionsScreen> createState() =>
+      _ScrutinizeSubmissionsScreenState();
+}
 
+class _ScrutinizeSubmissionsScreenState
+    extends State<ScrutinizeSubmissionsScreen> {
+  List<Map<String, String>> submissions = [
+    {
+      "title": "Initial Petition",
+      "uploadedBy": "Claimant (Amit Sharma)",
+      "date": "12 Sep 2025",
+      "file": "petition_doc.pdf",
+      "status": "Pending",
+    },
+    {
+      "title": "Preliminary Response",
+      "uploadedBy": "Respondent (Priya Singh)",
+      "date": "15 Sep 2025",
+      "file": "response_doc.pdf",
+      "status": "Pending",
+    },
+    {
+      "title": "Supporting Evidence",
+      "uploadedBy": "Claimant (Amit Sharma)",
+      "date": "18 Sep 2025",
+      "file": "evidence1.pdf",
+      "status": "Approved",
+    },
+  ];
+
+  void _updateStatus(int index, String newStatus) {
+    setState(() {
+      submissions[index]["status"] = newStatus;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+            "Submission '${submissions[index]["title"]}' marked as $newStatus."),
+        backgroundColor:
+            newStatus == "Approved" ? AppColors.primary : Colors.redAccent,
+      ),
+    );
+  }
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case "Approved":
+        return Colors.green;
+      case "Rejected":
+        return Colors.redAccent;
+      case "Pending":
+        return AppColors.accentOrange;
+      default:
+        return AppColors.textSecondary;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: ListView.builder(
+      body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: submissions.length,
+        separatorBuilder: (context, index) =>
+            const Divider(color: AppColors.divider),
         itemBuilder: (context, index) {
           final submission = submissions[index];
           return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             color: AppColors.cardBackground,
-            child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              leading: CircleAvatar(
-                backgroundColor: AppColors.primary.withOpacity(0.1),
-                child: const Icon(Icons.description, color: AppColors.primary),
-              ),
-              title: Text(
-                submission["docName"]!,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-              ),
-              subtitle: Column(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: AppColors.divider),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(submission["caseId"]!,
-                      style: const TextStyle(color: AppColors.textSecondary)),
-                  Text(submission["party"]!,
+                  // Title
+                  Text(
+                    submission["title"]!,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text("Uploaded By: ${submission["uploadedBy"]}",
                       style: const TextStyle(color: AppColors.textSecondary)),
                   Text("Date: ${submission["date"]}",
                       style: const TextStyle(color: AppColors.textSecondary)),
-                  Text("Status: ${submission["status"]}",
-                      style: TextStyle(
-                          color: submission["status"] == "Approved"
-                              ? Colors.green
-                              : submission["status"] == "Rejected"
-                                  ? Colors.red
-                                  : AppColors.accentOrange,
-                          fontWeight: FontWeight.w600)),
+                  Text("File: ${submission["file"]}",
+                      style: const TextStyle(color: AppColors.textSecondary)),
+                  const SizedBox(height: 8),
+
+                  // Status
+                  Text(
+                    "Status: ${submission["status"]}",
+                    style: TextStyle(
+                      color: _statusColor(submission["status"]!),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Actions
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton.icon(
+                        icon:
+                            const Icon(Icons.check_circle, color: Colors.green),
+                        label: const Text("Approve",
+                            style: TextStyle(color: Colors.green)),
+                        onPressed: submission["status"] == "Pending"
+                            ? () => _updateStatus(index, "Approved")
+                            : null,
+                      ),
+                      const SizedBox(width: 10),
+                      TextButton.icon(
+                        icon: const Icon(Icons.cancel, color: Colors.redAccent),
+                        label: const Text("Reject",
+                            style: TextStyle(color: Colors.redAccent)),
+                        onPressed: submission["status"] == "Pending"
+                            ? () => _updateStatus(index, "Rejected")
+                            : null,
+                      ),
+                    ],
+                  )
                 ],
-              ),
-              trailing: PopupMenuButton<String>(
-                onSelected: (value) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            "${submission["docName"]} marked as $value ✅")),
-                  );
-                },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: "Approved",
-                    child: Row(
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.green),
-                        SizedBox(width: 8),
-                        Text("Approve"),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuItem(
-                    value: "Rejected",
-                    child: Row(
-                      children: [
-                        Icon(Icons.cancel, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text("Reject"),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuItem(
-                    value: "Needs Revision",
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit, color: Colors.orange),
-                        SizedBox(width: 8),
-                        Text("Request Revision"),
-                      ],
-                    ),
-                  ),
-                ],
-                icon: const Icon(Icons.more_vert, color: AppColors.iconDefault),
               ),
             ),
           );

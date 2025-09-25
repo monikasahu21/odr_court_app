@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Profile&Settings/ChangePasswardScreen.dart';
 import 'package:odr_court_app/features/auth/Reusable_Widget/app_color.dart';
+import 'package:odr_court_app/features/auth/Reusable_Widget/app_state.dart';
+import 'package:provider/provider.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
   final String userName;
@@ -23,6 +26,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   bool _isNotificationEnabled = true;
   bool _isDarkModeEnabled = false;
   bool _isDataSaverEnabled = false;
+
+  // 🔹 Language state
+  String _selectedLanguage = "English";
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +83,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     _divider(),
                     _buildSettingsTile(
                       icon: Icons.language,
-                      title: "Language",
+                      title:
+                          "Language ($_selectedLanguage)", // ✅ shows selected language
                       color: AppColors.primary,
-                      onTap: () {},
+                      onTap: _showLanguageDialog,
                     ),
                     _divider(),
                     _buildSettingsTile(
@@ -105,7 +112,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     _buildSwitchTile(
                       icon: Icons.notifications,
                       title: "Enable Notifications",
-                      value: _isNotificationEnabled, // ✅ FIXED
+                      value: _isNotificationEnabled,
                       onChanged: (v) {
                         setState(() {
                           _isNotificationEnabled = v;
@@ -116,7 +123,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     _buildSwitchTile(
                       icon: Icons.dark_mode,
                       title: "Dark Mode",
-                      value: _isDarkModeEnabled, // ✅ FIXED
+                      value: _isDarkModeEnabled,
                       onChanged: (v) {
                         setState(() {
                           _isDarkModeEnabled = v;
@@ -128,7 +135,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     _buildSwitchTile(
                       icon: Icons.data_saver_on,
                       title: "Data Saver",
-                      value: _isDataSaverEnabled, // ✅ FIXED
+                      value: _isDataSaverEnabled,
                       onChanged: (v) {
                         setState(() {
                           _isDataSaverEnabled = v;
@@ -304,6 +311,47 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       value: value,
       activeColor: AppColors.accentOrange,
       onChanged: onChanged,
+    );
+  }
+
+  /// 🔹 Language Selection Dialog
+  void _showLanguageDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(S.of(context)!.language),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _languageOption("English", const Locale('en')),
+              _languageOption("हिन्दी", const Locale('hi')),
+              _languageOption("Français", const Locale('fr')),
+              _languageOption("Español", const Locale('es')),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _languageOption(String language, Locale locale) {
+    return RadioListTile<String>(
+      value: language,
+      groupValue: _selectedLanguage,
+      title: Text(language),
+      activeColor: AppColors.primary,
+      onChanged: (value) {
+        setState(() {
+          _selectedLanguage = value!;
+        });
+        // ✅ Update whole app language
+        Provider.of<AppState>(context, listen: false).setLocale(locale);
+
+        Navigator.pop(context);
+      },
     );
   }
 }

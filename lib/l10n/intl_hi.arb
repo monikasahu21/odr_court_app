@@ -1,0 +1,17 @@
+{
+  "@@locale": "hi",
+  "account": "खाता",
+  "changePassword": "पासवर्ड बदलें",
+  "language": "भाषा",
+  "privacySettings": "गोपनीयता सेटिंग्स",
+  "manageSubscriptions": "सदस्यता प्रबंधित करें",
+  "preferences": "प्राथमिकताएँ",
+  "enableNotifications": "सूचनाएँ सक्षम करें",
+  "darkMode": "डार्क मोड",
+  "dataSaver": "डेटा सेवर",
+  "other": "अन्य",
+  "helpSupport": "सहायता और समर्थन",
+  "aboutApp": "एप्लिकेशन के बारे में",
+  "logout": "लॉग आउट",
+  "editProfile": "प्रोफ़ाइल संपादित करें"
+}

@@ -1,0 +1,17 @@
+{
+  "@@locale": "en",
+  "account": "Account",
+  "changePassword": "Change Password",
+  "language": "Language",
+  "privacySettings": "Privacy Settings",
+  "manageSubscriptions": "Manage Subscriptions",
+  "preferences": "Preferences",
+  "enableNotifications": "Enable Notifications",
+  "darkMode": "Dark Mode",
+  "dataSaver": "Data Saver",
+  "other": "Other",
+  "helpSupport": "Help & Support",
+  "aboutApp": "About App",
+  "logout": "Logout",
+  "editProfile": "Edit Profile"
+}

@@ -1,30 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Dashboard_Home/CommonDashboardScreen.dart';
 import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Dashboard_Home/SideMenuDeshboard.dart';
+import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Help_&_Support/HelpSupportScreen.dart';
 import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Notifications_(updates,alerts,case_assignments)/Notifications.dart';
 import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Profile&Settings/ProfileSettingsScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/Common_Screens/others/Payments/payment_screen.dart';
-import 'package:odr_court_app/features/USER_MODEL/Neutral/Screens/Assigned_Cases_Overview/NeutralAssignedCasesScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/Neutral/Screens/Schedule_&_Manage_Hearings/schedule&manageHearing.dart';
+import 'package:odr_court_app/features/USER_MODEL/Neutral/Screens/Assigned_Cases_Overview/AssignedCasesOverviewScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/Neutral/Screens/Schedule_&_Manage_Hearings/ScheduleManageHearingsScreen.dart';
 import 'package:odr_court_app/features/USER_MODEL/Neutral/Screens/Scrutinize_Submissions/ScrutinizeSubmissionsScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/Neutral/Screens/Upload_Orders&_Awards&_Notes/NeutralUploadOrdersScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/admin/screens/Admin_Control/AdminControlScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/admin/screens/Case_Information&Case_Management/CaseInforScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/admin/screens/Reports&Analytics/ReportsScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/admin/screens/Schedule_Hearings/schedule_meeting_screen.dart';
-import 'package:odr_court_app/features/USER_MODEL/admin/screens/Submitted_Documents%20_(Approve&Reject)/SubmittedDocumentScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/admin/screens/System_Settings/AdminSettingScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/admin/screens/Timeline&Events/TimelineEventScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/admin/screens/Users_Management/UsersScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/Communication/communication_screen.dart';
-import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/FileNewCase_&_ServiceRequest/service_request_form.dart';
-import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/Upload_&_SubmitDocuments/document_upload_screen.dart';
-import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Case_Details_&_Submissions/CaseSubmissionScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Documents_Workspace/DocumentWorkspaceScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Events_&_Schedule/RespondentEventScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Online_Meeting_&_Hearing/hearingScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Payments_(pending&paid_cases)/respondentPaymentScreen.dart';
-import 'package:odr_court_app/features/USER_MODEL/respondent/screens/others/notiofication/RespondentNotificationScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/Neutral/Screens/Upload_Orders&_Awards&_Notes/UploadOrdersAwardsNotesScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Admin_Control/AdminControlsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Case_Information&Case_Management/CaseManagementScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Payment_management(Approve,Verify,refundfs)/PaymentManagementScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Reports&Analytics/ReportsAnalyticsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Schedule_Hearings/ScheduleHearingsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Service_Requests_(track&respond)/ServiceRequestsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Submitted_Documents%20_(Approve&Reject)/SubmittedDocumentsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/System_Settings/SystemSettingsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Timeline&Events/TimelineEventsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/admin/screens/Users_Management/User_ManagementScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/Case_Status_Tracking/CaseStatusTrackingScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/Communication/CommunicationScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/FileNewCase_&_ServiceRequest/FileNewCaseScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/Online_Hearing_Access/OnlineHearingAccessScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/Payment_Portal/PaymentPortalScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/SayaAgent/SayaAgentScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/claimant/Screens/Upload_&_SubmitDocuments/UploadDocumentsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Case_Details_&_Submissions/CaseDetailsScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Documents_Workspace/DocumentsWorkspaceScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Events_&_Schedule/EventsScheduleScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Online_Meeting_&_Hearing/OnlineMeetingScreen.dart';
+import 'package:odr_court_app/features/USER_MODEL/respondent/screens/Payments_(pending&paid_cases)/PaymentsScreen.dart';
 import 'package:odr_court_app/features/auth/Reusable_Widget/MenuItemData.dart';
 import 'package:odr_court_app/features/auth/Reusable_Widget/app_color.dart';
 import 'package:odr_court_app/features/auth/Reusable_Widget/role_menus.dart';
@@ -181,32 +186,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
 
       case 'Help & Support':
-        return const RespondentNotificationScreen();
+        return const HelpSupportScreen();
     }
 
     // 🔹 Admin
     if (role == "admin") {
       switch (title) {
         case 'Users Management':
-          return const UsersScreen();
+          return const UsersManagementScreen();
         case 'Case Information / Case Management':
-          return const CaseInformationScreen();
+          return const CaseManagementScreen();
         case 'Submitted Documents (Approve/Reject)':
           return const SubmittedDocumentsScreen();
         case 'Admin Controls':
-          return const AdminControlScreen();
+          return const AdminControlsScreen();
         case 'Timeline / Events':
-          return const AdminTimelineEventScreen();
+          return const TimelineEventsScreen();
         case 'Reports & Analytics':
-          return const ReportsScreen();
+          return const ReportsAnalyticsScreen();
         case 'Schedule Hearings':
-          return const ScheduleMeetingScreen();
+          return const ScheduleHearingsScreen();
         case 'Payment Management (approve, verify, refunds)':
-          return const PaymentScreen();
+          return const PaymentManagementScreen();
         case 'Service Requests (track/respond)':
-          return const PaymentScreen();
+          return const ServiceRequestsScreen();
         case 'System Settings':
-          return const AdminSettingScreen();
+          return const SystemSettingsScreen();
       }
     }
 
@@ -214,15 +219,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (role == "respondent") {
       switch (title) {
         case 'Case Details / Submissions':
-          return const CaseSubmissionScreen();
+          return const CaseDetailsScreen();
         case 'Online Meeting / Hearing':
-          return const RespondentHearingScreen();
+          return const OnlineMeetingScreen();
         case 'Documents Workspace':
-          return const DocumentWorkspaceScreen();
+          return const DocumentsWorkspaceScreen();
         case 'Events & Schedule':
-          return const RespondentEventScreen();
+          return const EventsScheduleScreen();
         case 'Payments (pending/paid cases)':
-          return const RespondentPaymentScreen();
+          return const PaymentsScreen();
       }
     }
 
@@ -232,17 +237,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         case 'Communication':
           return const CommunicationScreen();
         case 'File New Case / Service Request':
-          return const ServiceRequestForm();
+          return const FileNewCaseScreen();
         case 'Upload / Submit Documents':
-          return const DocumentUploadScreen();
+          return const UploadDocumentsScreen();
         case 'Payment Portal':
-          return const PaymentScreen();
+          return const PaymentPortalScreen();
         case 'Saya Agent':
-          return const PaymentScreen();
+          return const SayaAgentScreen();
         case 'Case Status Tracking':
-          return const PaymentScreen();
+          return const CaseStatusTrackingScreen();
         case 'Online Hearing Access':
-          return const PaymentScreen();
+          return const OnlineHearingAccessScreen();
       }
     }
 
@@ -250,13 +255,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (role == "neutral") {
       switch (title) {
         case 'Assigned Cases Overview':
-          return const NeutralAssignedCasesScreen();
+          return const AssignedCasesOverviewScreen();
         case 'Scrutinize Submissions (Claimant / Respondent)':
           return const ScrutinizeSubmissionsScreen();
         case 'Schedule & Manage Hearings':
-          return const NeutralScheduleHearingsScreen();
+          return const ScheduleManageHearingsScreen();
         case 'Upload Orders / Awards / Notes':
-          return const NeutralUploadOrdersScreen();
+          return const UploadOrdersAwardsNotesScreen();
       }
     }
 

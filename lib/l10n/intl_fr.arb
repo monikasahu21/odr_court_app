@@ -1,0 +1,17 @@
+{
+  "@@locale": "fr",
+  "account": "Compte",
+  "changePassword": "Changer le mot de passe",
+  "language": "Langue",
+  "privacySettings": "Paramètres de confidentialité",
+  "manageSubscriptions": "Gérer les abonnements",
+  "preferences": "Préférences",
+  "enableNotifications": "Activer les notifications",
+  "darkMode": "Mode sombre",
+  "dataSaver": "Économie de données",
+  "other": "Autre",
+  "helpSupport": "Aide et support",
+  "aboutApp": "À propos de l'application",
+  "logout": "Se déconnecter",
+  "editProfile": "Modifier le profil"
+}
