@@ -10,6 +10,10 @@ android {
     compileSdk = 35   // 🔥 must be 33 or higher for flutter_upi_india
     ndkVersion = flutter.ndkVersion
 
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -21,10 +25,10 @@ android {
 
     defaultConfig {
         applicationId "com.example.odr_court_app"
-        minSdkVersion 24   // 🔥 must be at least 24 for flutter_upi_india
-        targetSdkVersion 35
-        versionCode flutter.versionCode
-        versionName flutter.versionName
+        minSdkVersion 26   // ⬅️ Increase this to 26
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
     }
     buildTypes {
         release {
