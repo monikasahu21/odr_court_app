@@ -33,21 +33,34 @@ class _SayaAgentScreenState extends State<SayaAgentScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("New SAYA Agent assigned successfully"),
+        content: Text("✅ New SAYA Agent assigned successfully"),
         backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "SAYA Agent",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        elevation: 2,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: agentAssigned
             ? Card(
-                color: AppColors.cardBackground,
+                color: theme.cardColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                   side: const BorderSide(color: AppColors.divider),
@@ -66,8 +79,7 @@ class _SayaAgentScreenState extends State<SayaAgentScreen> {
                       const SizedBox(height: 12),
                       Text(
                         agentDetails["name"]!,
-                        style: const TextStyle(
-                          fontSize: 20,
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
@@ -75,8 +87,7 @@ class _SayaAgentScreenState extends State<SayaAgentScreen> {
                       const SizedBox(height: 4),
                       Text(
                         agentDetails["specialization"]!,
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),
                       ),
@@ -87,13 +98,15 @@ class _SayaAgentScreenState extends State<SayaAgentScreen> {
                         leading: const Icon(Icons.phone,
                             color: AppColors.iconDefault),
                         title: Text(agentDetails["phone"]!,
-                            style:
-                                const TextStyle(color: AppColors.textPrimary)),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: AppColors.textPrimary,
+                            )),
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content:
-                                  Text("Calling ${agentDetails["phone"]}..."),
+                              content: Text(
+                                "📞 Calling ${agentDetails["phone"]}...",
+                              ),
                             ),
                           );
                         },
@@ -102,13 +115,15 @@ class _SayaAgentScreenState extends State<SayaAgentScreen> {
                         leading: const Icon(Icons.email,
                             color: AppColors.iconDefault),
                         title: Text(agentDetails["email"]!,
-                            style:
-                                const TextStyle(color: AppColors.textPrimary)),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: AppColors.textPrimary,
+                            )),
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  "Sending email to ${agentDetails["email"]}..."),
+                                "📧 Sending email to ${agentDetails["email"]}...",
+                              ),
                             ),
                           );
                         },
@@ -116,9 +131,12 @@ class _SayaAgentScreenState extends State<SayaAgentScreen> {
                       ListTile(
                         leading: const Icon(Icons.verified_user,
                             color: AppColors.iconDefault),
-                        title: Text("Status: ${agentDetails["status"]!}",
-                            style: const TextStyle(
-                                color: AppColors.textSecondary)),
+                        title: Text(
+                          "Status: ${agentDetails["status"]!}",
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                       ),
 
                       const SizedBox(height: 20),
@@ -143,7 +161,7 @@ class _SayaAgentScreenState extends State<SayaAgentScreen> {
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Chat feature coming soon..."),
+                                content: Text("💬 Chat feature coming soon..."),
                                 backgroundColor: AppColors.accentOrange,
                               ),
                             );
@@ -161,10 +179,12 @@ class _SayaAgentScreenState extends State<SayaAgentScreen> {
                     const Icon(Icons.support_agent,
                         size: 80, color: AppColors.textSecondary),
                     const SizedBox(height: 12),
-                    const Text(
+                    Text(
                       "No SAYA Agent assigned yet.",
-                      style: TextStyle(
-                          fontSize: 16, color: AppColors.textSecondary),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(

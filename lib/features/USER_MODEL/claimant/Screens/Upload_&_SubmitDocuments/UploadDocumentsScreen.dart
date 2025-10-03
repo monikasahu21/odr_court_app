@@ -19,8 +19,9 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("File added successfully"),
+        content: Text("📄 File added successfully"),
         backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -32,8 +33,9 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("File removed"),
+        content: Text("🗑 File removed"),
         backgroundColor: AppColors.accentOrange,
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -42,8 +44,9 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     if (uploadedFiles.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please upload at least one document"),
+          content: Text("⚠ Please upload at least one document"),
           backgroundColor: AppColors.accentOrange,
+          behavior: SnackBarBehavior.floating,
         ),
       );
       return;
@@ -51,8 +54,9 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Documents submitted successfully!"),
+        content: Text("✅ Documents submitted successfully!"),
         backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
       ),
     );
 
@@ -63,12 +67,24 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Upload Documents",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        elevation: 2,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Card(
-          color: AppColors.cardBackground,
+          color: theme.cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: const BorderSide(color: AppColors.divider),
@@ -101,10 +117,12 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 // Documents list
                 Expanded(
                   child: uploadedFiles.isEmpty
-                      ? const Center(
+                      ? Center(
                           child: Text(
                             "No documents uploaded yet.",
-                            style: TextStyle(color: AppColors.textSecondary),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         )
                       : ListView.separated(
@@ -118,12 +136,14 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                   color: AppColors.iconDefault),
                               title: Text(
                                 uploadedFiles[index],
-                                style: const TextStyle(
-                                    color: AppColors.textPrimary),
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
                               trailing: IconButton(
                                 icon: const Icon(Icons.delete,
                                     color: Colors.redAccent),
+                                tooltip: "Remove file",
                                 onPressed: () => _removeFile(index),
                               ),
                             );

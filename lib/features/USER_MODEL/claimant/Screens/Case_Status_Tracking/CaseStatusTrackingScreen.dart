@@ -37,15 +37,23 @@ class _CaseStatusTrackingScreenState extends State<CaseStatusTrackingScreen> {
     },
   ];
 
+  /// 🔹 Show case timeline in a dialog
   void _showTimeline(Map<String, dynamic> caseData) {
+    final theme = Theme.of(context);
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppColors.cardBackground,
+          backgroundColor: theme.cardColor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
             "Case Timeline: ${caseData["caseId"]}",
-            style: const TextStyle(color: AppColors.textPrimary),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -61,12 +69,12 @@ class _CaseStatusTrackingScreenState extends State<CaseStatusTrackingScreen> {
                 ),
                 title: Text(
                   step["label"],
-                  style: TextStyle(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: step["done"]
                         ? AppColors.textPrimary
                         : AppColors.textSecondary,
                     fontWeight:
-                        step["done"] ? FontWeight.bold : FontWeight.normal,
+                        step["done"] ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
               );
@@ -74,8 +82,13 @@ class _CaseStatusTrackingScreenState extends State<CaseStatusTrackingScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text("Close",
-                  style: TextStyle(color: AppColors.primary)),
+              child: Text(
+                "Close",
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -84,6 +97,7 @@ class _CaseStatusTrackingScreenState extends State<CaseStatusTrackingScreen> {
     );
   }
 
+  /// 🔹 Status color mapping
   Color _statusColor(String status) {
     switch (status) {
       case "Filed":
@@ -101,28 +115,40 @@ class _CaseStatusTrackingScreenState extends State<CaseStatusTrackingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Case Status Tracking",
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColors.buttonTextLight,
+          ),
+        ),
+        elevation: 2,
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: cases.length,
-        separatorBuilder: (context, index) => const Divider(
-          color: AppColors.divider,
+        separatorBuilder: (context, index) => Divider(
+          color: theme.dividerColor,
         ),
         itemBuilder: (context, index) {
           final caseData = cases[index];
           return Card(
-            color: AppColors.cardBackground,
+            color: theme.cardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: theme.dividerColor),
             ),
             child: ListTile(
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               title: Text(
                 caseData["title"],
-                style: const TextStyle(
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
@@ -133,12 +159,14 @@ class _CaseStatusTrackingScreenState extends State<CaseStatusTrackingScreen> {
                   const SizedBox(height: 6),
                   Text(
                     "Filed On: ${caseData["filedOn"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     "Status: ${caseData["status"]}",
-                    style: TextStyle(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: _statusColor(caseData["status"]),
                       fontWeight: FontWeight.w600,
                     ),

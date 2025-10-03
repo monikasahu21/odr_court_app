@@ -44,7 +44,7 @@ class _DocumentsWorkspaceScreenState extends State<DocumentsWorkspaceScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("Document uploaded successfully"),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.successGreen,
       ),
     );
   }
@@ -64,28 +64,33 @@ class _DocumentsWorkspaceScreenState extends State<DocumentsWorkspaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text("Documents Workspace"),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.buttonTextLight,
+        elevation: 2,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Upload Button
+            /// 🔹 Upload Button
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.upload_file,
-                    color: AppColors.buttonTextLight),
-                label: const Text(
-                  "Upload Document",
-                  style: TextStyle(color: AppColors.buttonTextLight),
-                ),
+                icon: const Icon(Icons.upload_file),
+                label: const Text("Upload Document"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.buttonTextLight,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 onPressed: _uploadDocument,
@@ -93,49 +98,57 @@ class _DocumentsWorkspaceScreenState extends State<DocumentsWorkspaceScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Documents List
+            /// 🔹 Documents List
             Expanded(
               child: documents.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
                         "No documents uploaded yet.",
-                        style: TextStyle(color: AppColors.textSecondary),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     )
                   : ListView.separated(
                       itemCount: documents.length,
                       separatorBuilder: (context, index) =>
-                          const Divider(color: AppColors.divider),
+                          Divider(color: theme.dividerColor),
                       itemBuilder: (context, index) {
                         final doc = documents[index];
                         return Card(
-                          color: AppColors.cardBackground,
-                          elevation: 2,
+                          color: theme.cardColor,
+                          elevation: 3,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(color: AppColors.divider),
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(color: theme.dividerColor),
                           ),
                           child: ListTile(
-                            leading: const Icon(Icons.description,
-                                color: AppColors.iconDefault),
+                            leading: CircleAvatar(
+                              radius: 24,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.15),
+                              child: const Icon(Icons.description,
+                                  color: AppColors.primary),
+                            ),
                             title: Text(
                               doc["title"]!,
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
+                              style: theme.textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
                               ),
                             ),
                             subtitle: Text(
                               "By: ${doc["uploadedBy"]}\nDate: ${doc["date"]}",
-                              style: const TextStyle(
-                                  color: AppColors.textSecondary),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.download,
-                                      color: AppColors.primary),
+                                  icon: const Icon(Icons.download),
+                                  color: AppColors.primary,
                                   tooltip: "Download",
                                   onPressed: () {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -148,8 +161,8 @@ class _DocumentsWorkspaceScreenState extends State<DocumentsWorkspaceScreen> {
                                   },
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.redAccent),
+                                  icon: const Icon(Icons.delete),
+                                  color: AppColors.errorRed,
                                   tooltip: "Remove",
                                   onPressed: () => _removeDocument(index),
                                 ),

@@ -31,9 +31,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // ---------- Logo ----------
                 CircleAvatar(
                   radius: 40,
-                  backgroundColor: AppColors.cardBackground,
+                  backgroundColor: theme.cardColor,
                   child: Icon(Icons.gavel,
                       size: 50, color: AppColors.accentOrange),
                 ),
@@ -64,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // ---------- Card ----------
                 Card(
-                  color: AppColors.cardBackground,
+                  color: theme.cardColor,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16)),
                   elevation: 6,
@@ -73,8 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       children: [
                         Text("Sign In",
-                            style: GoogleFonts.poppins(
-                              fontSize: 20,
+                            style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
                             )),
@@ -83,12 +83,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Email
                         TextField(
                           controller: _emailController,
+                          style: theme.textTheme.bodyLarge,
                           decoration: InputDecoration(
                             labelText: "Email",
-                            labelStyle: GoogleFonts.poppins(
-                                color: AppColors.textSecondary),
+                            labelStyle: theme.textTheme.bodyMedium
+                                ?.copyWith(color: AppColors.textSecondary),
                             prefixIcon: Icon(Icons.email_outlined,
                                 color: AppColors.iconDefault),
+                            filled: true,
+                            fillColor: theme.cardColor,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -100,12 +103,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
+                          style: theme.textTheme.bodyLarge,
                           decoration: InputDecoration(
                             labelText: "Password",
-                            labelStyle: GoogleFonts.poppins(
-                                color: AppColors.textSecondary),
+                            labelStyle: theme.textTheme.bodyMedium
+                                ?.copyWith(color: AppColors.textSecondary),
                             prefixIcon: Icon(Icons.lock_outline,
                                 color: AppColors.iconDefault),
+                            filled: true,
+                            fillColor: theme.cardColor,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -127,7 +133,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         DropdownButtonFormField<Role>(
                           value: _selectedRole,
                           hint: const Text("Select Role"),
+                          style: theme.textTheme.bodyLarge,
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: theme.cardColor,
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12)),
                             prefixIcon: const Icon(Icons.account_circle),
@@ -135,7 +144,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           items: _roles
                               .map((r) => DropdownMenuItem(
                                     value: r,
-                                    child: Text(r.name),
+                                    child: Text(r.name,
+                                        style: theme.textTheme.bodyMedium),
                                   ))
                               .toList(),
                           onChanged: (role) =>
@@ -150,7 +160,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
-                              backgroundColor: AppColors.buttonBlue,
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: AppColors.buttonTextLight,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -175,9 +186,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => DashboardScreen.forRole(
-                                    userName: userName, // 👈 dynamic username
-                                    role: _selectedRole!
-                                        .name, // 👈 role from dropdown
+                                    userName: userName,
+                                    role: _selectedRole!.name,
                                   ),
                                 ),
                               );
@@ -208,18 +218,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                     required String mobile,
                                     required String country,
                                     required Role role,
-                                    Map<String, String>?
-                                        extraFields, // 👈 added here
+                                    Map<String, String>? extraFields,
                                   }) {
-                                    // You could save the user in DB here too
-                                    Navigator.pop(
-                                        context); // Go back after successful registration
-
+                                    Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          "Registered as ${role.name} ($email) "
-                                          "${extraFields != null ? " Extra: $extraFields" : ""}",
+                                          "Registered as ${role.name} ($email) ${extraFields != null ? " Extra: $extraFields" : ""}",
                                         ),
                                       ),
                                     );
@@ -230,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             "Create an account",
-                            style: GoogleFonts.poppins(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppColors.primary,
                             ),

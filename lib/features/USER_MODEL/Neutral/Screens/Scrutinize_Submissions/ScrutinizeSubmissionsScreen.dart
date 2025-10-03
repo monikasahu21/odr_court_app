@@ -44,8 +44,9 @@ class _ScrutinizeSubmissionsScreenState
       SnackBar(
         content: Text(
             "Submission '${submissions[index]["title"]}' marked as $newStatus."),
-        backgroundColor:
-            newStatus == "Approved" ? AppColors.primary : Colors.redAccent,
+        backgroundColor: newStatus == "Approved"
+            ? AppColors.successGreen
+            : AppColors.errorRed,
       ),
     );
   }
@@ -53,9 +54,9 @@ class _ScrutinizeSubmissionsScreenState
   Color _statusColor(String status) {
     switch (status) {
       case "Approved":
-        return Colors.green;
+        return AppColors.successGreen;
       case "Rejected":
-        return Colors.redAccent;
+        return AppColors.errorRed;
       case "Pending":
         return AppColors.accentOrange;
       default:
@@ -65,73 +66,93 @@ class _ScrutinizeSubmissionsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Scrutinize Submissions",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: AppColors.primary,
+        centerTitle: true,
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: submissions.length,
         separatorBuilder: (context, index) =>
-            const Divider(color: AppColors.divider),
+            Divider(color: theme.dividerColor),
         itemBuilder: (context, index) {
           final submission = submissions[index];
           return Card(
-            color: AppColors.cardBackground,
+            color: theme.cardColor,
             elevation: 3,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: theme.dividerColor),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title
+                  // 🔹 Title
                   Text(
                     submission["title"]!,
-                    style: const TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
-                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 6),
+
+                  // 🔹 Info
                   Text("Uploaded By: ${submission["uploadedBy"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   Text("Date: ${submission["date"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   Text("File: ${submission["file"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   const SizedBox(height: 8),
 
-                  // Status
+                  // 🔹 Status
                   Text(
                     "Status: ${submission["status"]}",
-                    style: TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       color: _statusColor(submission["status"]!),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 12),
 
-                  // Actions
+                  // 🔹 Actions
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton.icon(
-                        icon:
-                            const Icon(Icons.check_circle, color: Colors.green),
-                        label: const Text("Approve",
-                            style: TextStyle(color: Colors.green)),
+                        icon: const Icon(Icons.check_circle),
+                        label: const Text("Approve"),
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.successGreen,
+                        ),
                         onPressed: submission["status"] == "Pending"
                             ? () => _updateStatus(index, "Approved")
                             : null,
                       ),
                       const SizedBox(width: 10),
                       TextButton.icon(
-                        icon: const Icon(Icons.cancel, color: Colors.redAccent),
-                        label: const Text("Reject",
-                            style: TextStyle(color: Colors.redAccent)),
+                        icon: const Icon(Icons.cancel),
+                        label: const Text("Reject"),
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.errorRed,
+                        ),
                         onPressed: submission["status"] == "Pending"
                             ? () => _updateStatus(index, "Rejected")
                             : null,

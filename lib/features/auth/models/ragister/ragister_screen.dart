@@ -38,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _licenseController = TextEditingController();
 
   // States
-  Role _selectedRole = Role.claimant; // ✅ default role
+  Role _selectedRole = Role.claimant;
   String _country = 'India';
   bool _obscurePassword = true;
   bool _agreeTerms = false;
@@ -46,13 +46,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedRole = widget.role; // ✅ use role passed from Login
+    _selectedRole = widget.role;
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -62,8 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // ---------- Title ----------
               Text(
                 'Create ${_selectedRole.name[0].toUpperCase()}${_selectedRole.name.substring(1)} Account',
-                style: const TextStyle(
-                  fontSize: 22,
+                style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
@@ -75,6 +76,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 value: _selectedRole,
                 decoration: InputDecoration(
                   labelText: "Select Role *",
+                  labelStyle: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: theme.cardColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -82,7 +87,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 items: Role.values
                     .map((r) => DropdownMenuItem(
                           value: r,
-                          child: Text(r.name),
+                          child: Text(r.name,
+                              style: theme.textTheme.bodyMedium
+                                  ?.copyWith(color: AppColors.textPrimary)),
                         ))
                     .toList(),
                 onChanged: (r) {
@@ -107,9 +114,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
+                style: theme.textTheme.bodyLarge,
                 decoration: InputDecoration(
                   labelText: 'Password *',
-                  labelStyle: const TextStyle(color: AppColors.textSecondary),
+                  labelStyle: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: theme.cardColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -150,11 +161,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.divider),
                       borderRadius: BorderRadius.circular(8),
-                      color: AppColors.cardBackground,
+                      color: theme.cardColor,
                     ),
-                    child: const Text(
+                    child: Text(
                       '+91',
-                      style: TextStyle(color: AppColors.textPrimary),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textPrimary),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -176,19 +188,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               // ---------- Terms ----------
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Checkbox(
                     activeColor: AppColors.primary,
                     value: _agreeTerms,
                     onChanged: (v) => setState(() => _agreeTerms = v ?? false),
                   ),
-                  Text(
-                    "I agree to the Terms and Conditions",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
+                  Expanded(
+                    child: Text(
+                      "I agree to the Terms and Conditions",
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(color: AppColors.textSecondary),
                     ),
                   ),
                 ],
@@ -201,8 +211,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 48,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.buttonBlue,
-                    disabledBackgroundColor: Colors.black,
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.buttonTextLight,
+                    disabledBackgroundColor: theme.disabledColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -228,9 +239,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           );
                         }
                       : null,
-                  child: const Text(
+                  child: Text(
                     'Register',
-                    style: TextStyle(
+                    style: theme.textTheme.labelLarge?.copyWith(
                       fontSize: 16,
                       color: AppColors.buttonTextLight,
                     ),
@@ -243,9 +254,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text(
+                  child: Text(
                     "Already have an account? Login",
-                    style: TextStyle(color: AppColors.primary),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -262,12 +276,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String label,
     TextInputType keyboard = TextInputType.text,
   }) {
+    final theme = Theme.of(context);
+
     return TextField(
       controller: controller,
       keyboardType: keyboard,
+      style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        labelStyle: theme.textTheme.bodyMedium
+            ?.copyWith(color: AppColors.textSecondary),
+        filled: true,
+        fillColor: theme.cardColor,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -280,22 +300,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
-    return InputDecorator(
+    final theme = Theme.of(context);
+
+    return DropdownButtonFormField<String>(
+      value: value,
+      isExpanded: true,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        labelStyle: theme.textTheme.bodyMedium
+            ?.copyWith(color: AppColors.textSecondary),
+        filled: true,
+        fillColor: theme.cardColor,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: value,
-          isExpanded: true,
-          items: items
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-              .toList(),
-          onChanged: onChanged,
-        ),
-      ),
+      items: items
+          .map((e) => DropdownMenuItem(
+                value: e,
+                child: Text(e,
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(color: AppColors.textPrimary)),
+              ))
+          .toList(),
+      onChanged: onChanged,
     );
   }
 

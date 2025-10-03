@@ -6,28 +6,30 @@ class ServiceRequestForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final _formKey = GlobalKey<FormState>();
     final TextEditingController caseTitleCtrl = TextEditingController();
     final TextEditingController descriptionCtrl = TextEditingController();
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.accentOrange,
-        elevation: 4, // ✅ adds soft shadow
-        centerTitle: true, // ✅ center align title
+        elevation: 4,
+        centerTitle: true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(8), // ✅ rounded bottom corners
+            bottom: Radius.circular(8),
           ),
         ),
         title: Row(
-          mainAxisSize: MainAxisSize.min, // ✅ keeps icon+text centered
-          children: const [
-            Icon(Icons.assignment, color: AppColors.buttonTextLight, size: 24),
-            SizedBox(width: 8),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.assignment,
+                color: AppColors.buttonTextLight, size: 22),
+            const SizedBox(width: 8),
             Text(
               "New Service Request",
-              style: TextStyle(
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: AppColors.buttonTextLight,
@@ -36,9 +38,8 @@ class ServiceRequestForm extends StatelessWidget {
           ],
         ),
         iconTheme: const IconThemeData(color: AppColors.buttonTextLight),
-        toolbarHeight: 40, // ✅ taller for better look
+        toolbarHeight: 48,
       ),
-      backgroundColor: AppColors.background, // ✅ match background
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -48,11 +49,18 @@ class ServiceRequestForm extends StatelessWidget {
               // Case Title
               TextFormField(
                 controller: caseTitleCtrl,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                ),
                 decoration: InputDecoration(
                   labelText: "Case Title",
-                  labelStyle: const TextStyle(color: AppColors.textSecondary),
+                  labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  filled: true,
+                  fillColor: theme.cardColor,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: AppColors.primary),
@@ -60,17 +68,24 @@ class ServiceRequestForm extends StatelessWidget {
                 ),
                 validator: (v) => v!.isEmpty ? "Enter case title" : null,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
               // Case Description
               TextFormField(
                 controller: descriptionCtrl,
                 maxLines: 3,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                ),
                 decoration: InputDecoration(
                   labelText: "Case Description",
-                  labelStyle: const TextStyle(color: AppColors.textSecondary),
+                  labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  filled: true,
+                  fillColor: theme.cardColor,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: AppColors.primary),
@@ -83,31 +98,35 @@ class ServiceRequestForm extends StatelessWidget {
               // Submit Button
               SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.buttonBlue,
                     foregroundColor: AppColors.buttonTextLight,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("✅ Service Request Submitted"),
+                        SnackBar(
+                          content: const Text("✅ Service Request Submitted"),
                           backgroundColor: AppColors.primary,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       );
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text(
+                  child: Text(
                     "Submit",
-                    style: TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      color: AppColors.buttonTextLight,
                     ),
                   ),
                 ),

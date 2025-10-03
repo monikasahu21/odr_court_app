@@ -35,11 +35,13 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
     _messageController.clear();
 
     Future.delayed(const Duration(milliseconds: 300), () {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
     });
   }
 
-  Widget _buildMessageBubble(Map<String, String> message) {
+  Widget _buildMessageBubble(Map<String, String> message, ThemeData theme) {
     bool isClaimant = message["sender"] == "Claimant";
     return Align(
       alignment: isClaimant ? Alignment.centerRight : Alignment.centerLeft,
@@ -48,11 +50,10 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isClaimant
-              ? AppColors.primary
-                  .withOpacity(0.15) // claimant message background
-              : AppColors.cardBackground, // admin message background
+              ? AppColors.primary.withOpacity(0.15)
+              : theme.cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.divider),
+          border: Border.all(color: theme.dividerColor),
         ),
         child: Column(
           crossAxisAlignment:
@@ -60,8 +61,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
           children: [
             Text(
               message["sender"]!,
-              style: TextStyle(
-                fontSize: 12,
+              style: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: isClaimant ? AppColors.primary : AppColors.textSecondary,
               ),
@@ -69,7 +69,9 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
             const SizedBox(height: 4),
             Text(
               message["text"]!,
-              style: const TextStyle(color: AppColors.textPrimary),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textPrimary,
+              ),
             ),
           ],
         ),
@@ -79,8 +81,20 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Case Communication",
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColors.buttonTextLight,
+          ),
+        ),
+        elevation: 1,
+      ),
       body: Column(
         children: [
           // Messages
@@ -89,7 +103,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
               controller: _scrollController,
               itemCount: messages.length,
               itemBuilder: (context, index) {
-                return _buildMessageBubble(messages[index]);
+                return _buildMessageBubble(messages[index], theme);
               },
             ),
           ),
@@ -97,10 +111,10 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
           // Input Box
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            decoration: const BoxDecoration(
-              color: AppColors.cardBackground,
+            decoration: BoxDecoration(
+              color: theme.cardColor,
               border: Border(
-                top: BorderSide(color: AppColors.divider),
+                top: BorderSide(color: theme.dividerColor),
               ),
             ),
             child: Row(
@@ -108,10 +122,14 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
-                    style: const TextStyle(color: AppColors.textPrimary),
-                    decoration: const InputDecoration(
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                    decoration: InputDecoration(
                       hintText: "Type your message...",
-                      hintStyle: TextStyle(color: AppColors.textSecondary),
+                      hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                       border: InputBorder.none,
                     ),
                   ),

@@ -39,6 +39,8 @@ class _OnlineHearingAccessScreenState extends State<OnlineHearingAccessScreen> {
       SnackBar(
         content: Text("Joining online hearing for Case $caseId..."),
         backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -56,8 +58,20 @@ class _OnlineHearingAccessScreenState extends State<OnlineHearingAccessScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Online Hearing Access",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevation: 2,
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: hearings.length,
@@ -66,7 +80,7 @@ class _OnlineHearingAccessScreenState extends State<OnlineHearingAccessScreen> {
         itemBuilder: (context, index) {
           final hearing = hearings[index];
           return Card(
-            color: AppColors.cardBackground,
+            color: theme.cardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: const BorderSide(color: AppColors.divider),
@@ -77,44 +91,51 @@ class _OnlineHearingAccessScreenState extends State<OnlineHearingAccessScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Case ID
                   Text(
                     "Case: ${hearing["caseId"]}",
-                    style: const TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
-                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    "Date: ${hearing["date"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
-                  Text(
-                    "Time: ${hearing["time"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
-                  Text(
-                    "Judge: ${hearing["judge"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
+
+                  // Details
+                  Text("Date: ${hearing["date"]}",
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
+                  Text("Time: ${hearing["time"]}",
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
+                  Text("Judge: ${hearing["judge"]}",
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
+
                   const SizedBox(height: 10),
+
+                  // Status + Join Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Status: ${hearing["status"]}",
-                        style: TextStyle(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: _statusColor(hearing["status"]!),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       ElevatedButton.icon(
-                        icon: const Icon(Icons.video_call,
-                            color: AppColors.buttonTextLight),
-                        label: const Text(
+                        icon: const Icon(
+                          Icons.video_call,
+                          color: AppColors.buttonTextLight,
+                        ),
+                        label: Text(
                           "Join Now",
-                          style: TextStyle(color: AppColors.buttonTextLight),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.buttonTextLight,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,

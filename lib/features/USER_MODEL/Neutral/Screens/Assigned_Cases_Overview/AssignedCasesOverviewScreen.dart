@@ -45,7 +45,7 @@ class _AssignedCasesOverviewScreenState
       case "Hearing Scheduled":
         return AppColors.primary;
       case "Resolved":
-        return Colors.green;
+        return AppColors.successGreen;
       default:
         return AppColors.textSecondary;
     }
@@ -53,72 +53,91 @@ class _AssignedCasesOverviewScreenState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Assigned Cases Overview",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: AppColors.primary,
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(8),
         itemCount: assignedCases.length,
         separatorBuilder: (context, index) =>
-            const Divider(color: AppColors.divider),
+            Divider(color: theme.dividerColor),
         itemBuilder: (context, index) {
           final caseData = assignedCases[index];
           return Card(
-            color: AppColors.cardBackground,
+            color: theme.cardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: theme.dividerColor),
             ),
             elevation: 3,
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Case Title & ID
+                  /// Case Title & ID
                   Text(
                     "${caseData["caseId"]} - ${caseData["title"]}",
-                    style: const TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
-                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 6),
 
-                  // Claimant & Respondent
+                  /// Claimant & Respondent
                   Text(
                     "Claimant: ${caseData["claimant"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(color: AppColors.textSecondary),
                   ),
                   Text(
                     "Respondent: ${caseData["respondent"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 6),
 
-                  // Status & Hearing
+                  /// Status & Hearing
                   Text(
                     "Status: ${caseData["status"]}",
-                    style: TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       color: _statusColor(caseData["status"]!),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
                     "Next Hearing: ${caseData["nextHearing"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 12),
 
-                  // Actions
+                  /// Actions
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton.icon(
                         icon: const Icon(Icons.visibility,
                             color: AppColors.primary),
-                        label: const Text("View Details",
-                            style: TextStyle(color: AppColors.primary)),
+                        label: Text(
+                          "View Details",
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -133,7 +152,8 @@ class _AssignedCasesOverviewScreenState
                       if (caseData["status"] != "Resolved")
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: AppColors.accentOrange,
+                            foregroundColor: AppColors.buttonTextLight,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -147,9 +167,12 @@ class _AssignedCasesOverviewScreenState
                               ),
                             );
                           },
-                          child: const Text(
+                          child: Text(
                             "Update Progress",
-                            style: TextStyle(color: AppColors.buttonTextLight),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppColors.buttonTextLight,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                     ],

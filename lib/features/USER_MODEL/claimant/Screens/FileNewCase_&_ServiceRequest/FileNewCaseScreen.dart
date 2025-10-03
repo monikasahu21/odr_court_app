@@ -19,9 +19,12 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
     if (_titleController.text.trim().isEmpty ||
         _descController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please fill all fields"),
+        SnackBar(
+          content: const Text("Please fill all fields"),
           backgroundColor: AppColors.accentOrange,
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
       return;
@@ -31,6 +34,8 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
       SnackBar(
         content: Text("$requestType submitted successfully!"),
         backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
 
@@ -44,16 +49,28 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "File New Case",
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColors.buttonTextLight,
+          ),
+        ),
+        elevation: 1,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Card(
-          color: AppColors.cardBackground,
+          color: theme.cardColor,
           elevation: 3,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(color: AppColors.divider),
+            side: BorderSide(color: theme.dividerColor),
           ),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -61,9 +78,9 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Request Type
-                const Text(
+                Text(
                   "Request Type",
-                  style: TextStyle(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
@@ -71,8 +88,12 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: requestType,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    filled: true,
+                    fillColor: theme.cardColor,
                   ),
                   items: const [
                     DropdownMenuItem(value: "Case", child: Text("Case")),
@@ -91,9 +112,16 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
                 // Title
                 TextField(
                   controller: _titleController,
-                  decoration: const InputDecoration(
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textPrimary),
+                  decoration: InputDecoration(
                     labelText: "Title",
-                    border: OutlineInputBorder(),
+                    labelStyle: theme.textTheme.bodyMedium
+                        ?.copyWith(color: AppColors.textSecondary),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    filled: true,
+                    fillColor: theme.cardColor,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -102,9 +130,16 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
                 TextField(
                   controller: _descController,
                   maxLines: 5,
-                  decoration: const InputDecoration(
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textPrimary),
+                  decoration: InputDecoration(
                     labelText: "Description",
-                    border: OutlineInputBorder(),
+                    labelStyle: theme.textTheme.bodyMedium
+                        ?.copyWith(color: AppColors.textSecondary),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    filled: true,
+                    fillColor: theme.cardColor,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -116,7 +151,8 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
                     const SizedBox(width: 8),
                     Text(
                       fileAttached ? "File attached" : "No file attached",
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary),
                     ),
                     const Spacer(),
                     TextButton(
@@ -127,7 +163,10 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
                       },
                       child: Text(
                         fileAttached ? "Remove" : "Attach File",
-                        style: const TextStyle(color: AppColors.primary),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -141,9 +180,12 @@ class _FileNewCaseScreenState extends State<FileNewCaseScreen> {
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.send,
                         color: AppColors.buttonTextLight),
-                    label: const Text(
+                    label: Text(
                       "Submit",
-                      style: TextStyle(color: AppColors.buttonTextLight),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.buttonTextLight,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.buttonBlue,

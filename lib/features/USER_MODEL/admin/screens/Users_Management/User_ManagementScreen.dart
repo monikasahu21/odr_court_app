@@ -68,15 +68,18 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
 
   void _deleteUser(int index) {
     setState(() {
-      users.removeWhere((u) =>
-          u["email"] == filteredUsers[index]["email"]); // remove from main list
-      filteredUsers.removeAt(index); // remove from filtered
+      users.removeWhere(
+          (u) => u["email"] == filteredUsers[index]["email"]); // remove main
+      filteredUsers.removeAt(index); // remove filtered
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
           // 🔹 Search bar
@@ -87,11 +90,13 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search),
                 hintText: "Search users...",
+                hintStyle: theme.textTheme.bodyMedium
+                    ?.copyWith(color: AppColors.textSecondary),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: theme.cardColor,
               ),
             ),
           ),
@@ -108,19 +113,28 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  color: theme.cardColor,
                   elevation: 3,
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: AppColors.primary.withOpacity(0.15),
-                      child: Icon(Icons.person,
-                          color:
-                              user["active"] ? AppColors.primary : Colors.grey),
+                      backgroundColor: theme.primaryColor.withOpacity(0.15),
+                      child: Icon(
+                        Icons.person,
+                        color: user["active"]
+                            ? theme.primaryColor
+                            : AppColors.textSecondary,
+                      ),
                     ),
                     title: Text(
                       user["name"],
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: theme.textTheme.titleLarge,
                     ),
-                    subtitle: Text("${user["email"]} • ${user["role"]}"),
+                    subtitle: Text(
+                      "${user["email"]} • ${user["role"]}",
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
                     trailing: PopupMenuButton<String>(
                       onSelected: (value) {
                         if (value == "toggle") {
@@ -132,12 +146,18 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
                       itemBuilder: (context) => [
                         PopupMenuItem(
                           value: "toggle",
-                          child:
-                              Text(user["active"] ? "Deactivate" : "Activate"),
+                          child: Text(
+                            user["active"] ? "Deactivate" : "Activate",
+                            style: theme.textTheme.bodyMedium,
+                          ),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: "delete",
-                          child: Text("Delete"),
+                          child: Text(
+                            "Delete",
+                            style: theme.textTheme.bodyMedium
+                                ?.copyWith(color: Colors.red),
+                          ),
                         ),
                       ],
                     ),
@@ -148,18 +168,21 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
           ),
         ],
       ),
+
+      // 🔹 FAB
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
+        backgroundColor: theme.primaryColor,
         onPressed: () {
           _showAddUserDialog(context);
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
   // 🔹 Add User Dialog
   void _showAddUserDialog(BuildContext context) {
+    final theme = Theme.of(context);
     String name = "";
     String email = "";
     String role = "Claimant";
@@ -168,7 +191,9 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: const Text("Add New User"),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text("Add New User", style: theme.textTheme.titleLarge),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -176,10 +201,12 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
                 decoration: const InputDecoration(labelText: "Name"),
                 onChanged: (val) => name = val,
               ),
+              const SizedBox(height: 8),
               TextField(
                 decoration: const InputDecoration(labelText: "Email"),
                 onChanged: (val) => email = val,
               ),
+              const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 value: role,
                 items: const [
@@ -196,13 +223,12 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text("Cancel"),
+              child: Text("Cancel",
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary)),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-              child: const Text("Add"),
               onPressed: () {
                 if (name.isNotEmpty && email.isNotEmpty) {
                   setState(() {
@@ -217,6 +243,7 @@ class _UsersManagementScreenState extends State<UsersManagementScreen> {
                   Navigator.pop(context);
                 }
               },
+              child: const Text("Add"),
             ),
           ],
         );

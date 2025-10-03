@@ -3,12 +3,18 @@ import 'package:odr_court_app/features/auth/Reusable_Widget/MenuItemData.dart';
 
 class RoleMenus {
   // 🔹 Common menu (visible for all users)
-  static const common = [
+  static final common = [
     MenuItemData('Dashboard / Home', Icons.dashboard),
     MenuItemData('Notifications (updates, alerts, case assignments)',
         Icons.notifications),
     MenuItemData('Profile & Settings', Icons.person),
     MenuItemData('Help & Support', Icons.help_outline),
+
+    // ✅ Added calculators with screens
+    MenuItemData(
+      'Arbitration Calculators',
+      Icons.calculate,
+    ),
   ];
 
   // 🔹 Admin menu

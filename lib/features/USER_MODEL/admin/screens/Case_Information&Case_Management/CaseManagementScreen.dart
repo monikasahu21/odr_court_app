@@ -11,7 +11,6 @@ class CaseManagementScreen extends StatefulWidget {
 class _CaseManagementScreenState extends State<CaseManagementScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // 🔹 Dummy data (replace with API/DB later)
   List<Map<String, dynamic>> cases = [
     {
       "caseId": "C-1001",
@@ -61,10 +60,9 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
   void _updateCaseStatus(int index, String newStatus) {
     setState(() {
       filteredCases[index]["status"] = newStatus;
-      // also update in main list
       cases.firstWhere(
-              (c) => c["caseId"] == filteredCases[index]["caseId"])["status"] =
-          newStatus;
+        (c) => c["caseId"] == filteredCases[index]["caseId"],
+      )["status"] = newStatus;
     });
   }
 
@@ -77,7 +75,20 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Case Management",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevation: 2,
+      ),
       body: Column(
         children: [
           // 🔹 Search bar
@@ -86,13 +97,14 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search, color: AppColors.primary),
                 hintText: "Search cases...",
+                hintStyle: const TextStyle(color: AppColors.textSecondary),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: AppColors.cardBackground,
               ),
             ),
           ),
@@ -104,6 +116,7 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
               itemBuilder: (context, index) {
                 final caseItem = filteredCases[index];
                 return Card(
+                  color: AppColors.cardBackground,
                   margin:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   shape: RoundedRectangleBorder(
@@ -111,24 +124,40 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
                   ),
                   elevation: 3,
                   child: ListTile(
+                    contentPadding: const EdgeInsets.all(12),
                     leading: CircleAvatar(
                       backgroundColor: AppColors.primary.withOpacity(0.15),
                       child: const Icon(Icons.gavel, color: AppColors.primary),
                     ),
-                    title: Text(caseItem["caseId"],
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Parties: ${caseItem["parties"]}"),
-                        Text("Neutral: ${caseItem["neutral"]}"),
-                        Text("Date: ${caseItem["date"]}"),
-                        Text("Status: ${caseItem["status"]}",
-                            style: TextStyle(
-                              color: _statusColor(caseItem["status"]),
-                              fontWeight: FontWeight.w600,
-                            )),
-                      ],
+                    title: Text(
+                      caseItem["caseId"],
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Parties: ${caseItem["parties"]}",
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14,
+                                  color: AppColors.textSecondary)),
+                          Text("Neutral: ${caseItem["neutral"]}",
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14,
+                                  color: AppColors.textSecondary)),
+                          Text("Date: ${caseItem["date"]}",
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14,
+                                  color: AppColors.textSecondary)),
+                          const SizedBox(height: 4),
+                          _buildStatusChip(caseItem["status"]),
+                        ],
+                      ),
                     ),
                     trailing: PopupMenuButton<String>(
                       onSelected: (value) {
@@ -150,7 +179,12 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
                             value: "Closed", child: Text("Mark as Closed")),
                         const PopupMenuDivider(),
                         const PopupMenuItem(
-                            value: "delete", child: Text("Delete Case")),
+                          value: "delete",
+                          child: Text(
+                            "Delete Case",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -162,10 +196,8 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        onPressed: () {
-          _showAddCaseDialog(context);
-        },
-        child: const Icon(Icons.add),
+        onPressed: () => _showAddCaseDialog(context),
+        child: const Icon(Icons.add, color: AppColors.buttonTextLight),
       ),
     );
   }
@@ -182,7 +214,14 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: const Text("Add New Case"),
+          backgroundColor: AppColors.cardBackground,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text(
+            "Add New Case",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -191,15 +230,18 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
                   decoration: const InputDecoration(labelText: "Case ID"),
                   onChanged: (val) => caseId = val,
                 ),
+                const SizedBox(height: 8),
                 TextField(
                   decoration: const InputDecoration(labelText: "Parties"),
                   onChanged: (val) => parties = val,
                 ),
+                const SizedBox(height: 8),
                 TextField(
                   decoration:
                       const InputDecoration(labelText: "Assigned Neutral"),
                   onChanged: (val) => neutral = val,
                 ),
+                const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   value: status,
                   items: const [
@@ -218,13 +260,17 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text("Cancel"),
+              child: const Text("Cancel",
+                  style: TextStyle(color: AppColors.textSecondary)),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-              child: const Text("Add"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.buttonTextLight,
+              ),
+              child: const Text("Add",
+                  style: TextStyle(fontWeight: FontWeight.w600)),
               onPressed: () {
                 if (caseId.isNotEmpty &&
                     parties.isNotEmpty &&
@@ -249,6 +295,20 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
     );
   }
 
+  /// 🔹 Status Chip
+  Widget _buildStatusChip(String status) {
+    Color color = _statusColor(status);
+    return Chip(
+      label: Text(
+        status,
+        style: const TextStyle(
+            fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+      backgroundColor: color,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+    );
+  }
+
   Color _statusColor(String status) {
     switch (status) {
       case "Open":
@@ -258,9 +318,9 @@ class _CaseManagementScreenState extends State<CaseManagementScreen> {
       case "Resolved":
         return Colors.green;
       case "Closed":
-        return Colors.red;
+        return Colors.redAccent;
       default:
-        return Colors.black;
+        return AppColors.textPrimary;
     }
   }
 }

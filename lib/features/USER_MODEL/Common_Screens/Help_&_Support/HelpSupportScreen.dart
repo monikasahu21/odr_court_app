@@ -36,9 +36,11 @@ class HelpSupportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = S.of(context); // ✅ localization
+    //final loc = S.of(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -72,7 +74,6 @@ class HelpSupportScreen extends StatelessWidget {
             title: "FAQs",
             subtitle: "Find answers to common questions",
             onTap: () {
-              // Navigate to FAQs page (optional)
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -91,21 +92,29 @@ class HelpSupportScreen extends StatelessWidget {
       required String title,
       required String subtitle,
       required VoidCallback onTap}) {
+    final theme = Theme.of(context);
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: theme.cardColor, // ✅ adapts to dark/light
       elevation: 3,
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppColors.primary.withOpacity(0.15),
           child: Icon(icon, color: AppColors.primary),
         ),
-        title: Text(title,
-            style: const TextStyle(
-                fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-        subtitle: Text(subtitle,
-            style: const TextStyle(color: AppColors.textSecondary)),
-        trailing:
-            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        title: Text(
+          title,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: theme.textTheme.bodyMedium,
+        ),
+        trailing: Icon(Icons.arrow_forward_ios,
+            size: 16, color: theme.iconTheme.color?.withOpacity(0.6)),
         onTap: onTap,
       ),
     );
@@ -119,32 +128,43 @@ class FaqScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = S.of(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("FAQs"),
+        title: const Text("FAQs"),
         backgroundColor: AppColors.primary,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
-        children: const [
+        children: [
           ExpansionTile(
-            title: Text("How do I reset my password?"),
+            iconColor: AppColors.accentOrange,
+            collapsedIconColor: theme.iconTheme.color,
+            title: Text("How do I reset my password?",
+                style: theme.textTheme.bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.w600)),
             children: [
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                    "Go to Profile > Change Password and follow the steps."),
+                    "Go to Profile > Change Password and follow the steps.",
+                    style: theme.textTheme.bodyMedium),
               ),
             ],
           ),
           ExpansionTile(
-            title: Text("How to change language?"),
+            iconColor: AppColors.accentOrange,
+            collapsedIconColor: theme.iconTheme.color,
+            title: Text("How to change language?",
+                style: theme.textTheme.bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.w600)),
             children: [
               Padding(
-                padding: EdgeInsets.all(8.0),
-                child:
-                    Text("Go to Profile > Language and select your language."),
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                    "Go to Profile > Language and select your language.",
+                    style: theme.textTheme.bodyMedium),
               ),
             ],
           ),

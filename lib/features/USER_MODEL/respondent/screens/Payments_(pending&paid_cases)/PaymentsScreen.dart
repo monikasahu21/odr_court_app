@@ -42,18 +42,20 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-            "Payment of ${payments[index]["amount"]} for ${payments[index]["caseId"]} completed!"),
+          "Payment of ${payments[index]["amount"]} for ${payments[index]["caseId"]} completed!",
+        ),
         backgroundColor: AppColors.primary,
       ),
     );
   }
 
+  /// 🔹 Map status to theme colors
   Color _statusColor(String status) {
     switch (status) {
       case "Pending":
         return AppColors.accentOrange;
       case "Paid":
-        return Colors.green;
+        return AppColors.successGreen;
       default:
         return AppColors.textSecondary;
     }
@@ -61,20 +63,28 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text("Payments"),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.buttonTextLight,
+        elevation: 2,
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: payments.length,
         separatorBuilder: (context, index) =>
-            const Divider(color: AppColors.divider),
+            Divider(color: theme.dividerColor),
         itemBuilder: (context, index) {
           final payment = payments[index];
           return Card(
-            color: AppColors.cardBackground,
+            color: theme.cardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: theme.dividerColor),
             ),
             elevation: 3,
             child: Padding(
@@ -82,28 +92,36 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 🔹 Case ID
                   Text(
                     "Case: ${payment["caseId"]}",
-                    style: const TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
-                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 8),
+
+                  // 🔹 Payment Details
                   Text("Amount: ${payment["amount"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   Text("Due Date: ${payment["dueDate"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   Text("Method: ${payment["method"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
+
                   const SizedBox(height: 10),
+
+                  // 🔹 Status + Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Status: ${payment["status"]}",
-                        style: TextStyle(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: _statusColor(payment["status"]!),
                           fontWeight: FontWeight.w600,
                         ),

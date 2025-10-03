@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odr_court_app/features/auth/Reusable_Widget/app_color.dart';
 
 class TimelineEventsScreen extends StatefulWidget {
   const TimelineEventsScreen({super.key});
@@ -70,7 +71,7 @@ class _TimelineEventsScreenState extends State<TimelineEventsScreen> {
       case "User":
         return Colors.purple;
       default:
-        return Colors.grey;
+        return AppColors.iconDefault;
     }
   }
 
@@ -91,7 +92,16 @@ class _TimelineEventsScreenState extends State<TimelineEventsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text("Timeline & Events",
+            style: theme.textTheme.titleLarge
+                ?.copyWith(color: AppColors.buttonTextLight)),
+        elevation: 0,
+      ),
       body: Column(
         children: [
           // 🔹 Search bar
@@ -102,31 +112,41 @@ class _TimelineEventsScreenState extends State<TimelineEventsScreen> {
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search),
                 hintText: "Search events...",
+                hintStyle: theme.textTheme.bodyMedium
+                    ?.copyWith(color: AppColors.textSecondary),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: theme.cardColor,
               ),
             ),
           ),
 
           // 🔹 Timeline list
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredEvents.length,
-              itemBuilder: (context, index) {
-                final event = filteredEvents[index];
-                return _buildTimelineTile(event);
-              },
-            ),
+            child: filteredEvents.isEmpty
+                ? Center(
+                    child: Text(
+                      "No events found",
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: filteredEvents.length,
+                    itemBuilder: (context, index) {
+                      final event = filteredEvents[index];
+                      return _buildTimelineTile(event, theme);
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTimelineTile(Map<String, dynamic> event) {
+  Widget _buildTimelineTile(Map<String, dynamic> event, ThemeData theme) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
@@ -147,14 +167,16 @@ class _TimelineEventsScreenState extends State<TimelineEventsScreen> {
               Container(
                 width: 2,
                 height: 60,
-                color: Colors.grey.shade300,
+                color: theme.dividerColor,
               ),
             ],
           ),
           const SizedBox(width: 12),
+
           // 🔹 Event details
           Expanded(
             child: Card(
+              color: theme.cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -164,16 +186,24 @@ class _TimelineEventsScreenState extends State<TimelineEventsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(event["title"],
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(
+                      event["title"],
+                      style: theme.textTheme.titleLarge,
+                    ),
                     const SizedBox(height: 4),
-                    Text(event["description"],
-                        style: const TextStyle(color: Colors.black87)),
+                    Text(
+                      event["description"],
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary),
+                    ),
                     const SizedBox(height: 6),
-                    Text(event["date"],
-                        style:
-                            const TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(
+                      event["date"],
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontStyle: FontStyle.italic,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ),

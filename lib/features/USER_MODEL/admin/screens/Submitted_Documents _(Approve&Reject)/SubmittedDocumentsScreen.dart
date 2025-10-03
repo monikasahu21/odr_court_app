@@ -49,37 +49,62 @@ class _SubmittedDocumentsScreenState extends State<SubmittedDocumentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Submitted Documents",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+          ),
+        ),
+        elevation: 0,
+      ),
       body: ListView.builder(
         itemCount: documents.length,
         itemBuilder: (context, index) {
           final doc = documents[index];
           return Card(
+            color: theme.cardColor,
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             elevation: 3,
             child: ListTile(
+              contentPadding: const EdgeInsets.all(12),
               leading: CircleAvatar(
                 backgroundColor: AppColors.primary.withOpacity(0.15),
                 child: const Icon(Icons.insert_drive_file,
                     color: AppColors.primary),
               ),
-              title: Text(doc["docName"],
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Uploaded by: ${doc["uploadedBy"]}"),
-                  Text("Case ID: ${doc["caseId"]}"),
-                  Text("Date: ${doc["date"]}"),
-                  Text("Status: ${doc["status"]}",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: _statusColor(doc["status"]),
-                      )),
-                ],
+              title: Text(
+                doc["docName"],
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Uploaded by: ${doc["uploadedBy"]}",
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: AppColors.textSecondary)),
+                    Text("Case ID: ${doc["caseId"]}",
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: AppColors.textSecondary)),
+                    Text("Date: ${doc["date"]}",
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: AppColors.textSecondary)),
+                    const SizedBox(height: 4),
+                    _buildStatusBadge(doc["status"], theme),
+                  ],
+                ),
               ),
               trailing: PopupMenuButton<String>(
                 onSelected: (value) {
@@ -103,7 +128,10 @@ class _SubmittedDocumentsScreenState extends State<SubmittedDocumentsScreen> {
                   const PopupMenuDivider(),
                   const PopupMenuItem(
                     value: "delete",
-                    child: Text("Delete"),
+                    child: Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ],
               ),
@@ -114,16 +142,43 @@ class _SubmittedDocumentsScreenState extends State<SubmittedDocumentsScreen> {
     );
   }
 
-  Color _statusColor(String status) {
+  /// 🔹 Status Badge styled with theme
+  Widget _buildStatusBadge(String status, ThemeData theme) {
+    Color bgColor;
+    Color textColor;
+
     switch (status) {
       case "Pending":
-        return Colors.orange;
+        bgColor = Colors.orange.withOpacity(0.2);
+        textColor = Colors.orange;
+        break;
       case "Approved":
-        return Colors.green;
+        bgColor = Colors.green.withOpacity(0.2);
+        textColor = Colors.green;
+        break;
       case "Rejected":
-        return Colors.red;
+        bgColor = Colors.red.withOpacity(0.2);
+        textColor = Colors.red;
+        break;
       default:
-        return Colors.black;
+        bgColor = Colors.grey.withOpacity(0.2);
+        textColor = Colors.grey;
     }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        status,
+        style: theme.textTheme.bodySmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: textColor,
+          fontSize: 13,
+        ),
+      ),
+    );
   }
 }

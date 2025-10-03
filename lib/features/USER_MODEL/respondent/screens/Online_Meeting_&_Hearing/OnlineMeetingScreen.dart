@@ -35,12 +35,13 @@ class _OnlineMeetingScreenState extends State<OnlineMeetingScreen> {
     );
   }
 
+  /// 🔹 Map status to theme colors
   Color _statusColor(String status) {
     switch (status) {
       case "Scheduled":
         return AppColors.primary;
       case "Completed":
-        return Colors.green;
+        return AppColors.successGreen;
       default:
         return AppColors.textSecondary;
     }
@@ -48,20 +49,28 @@ class _OnlineMeetingScreenState extends State<OnlineMeetingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text("Online Hearings"),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.buttonTextLight,
+        elevation: 2,
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: hearings.length,
         separatorBuilder: (context, index) =>
-            const Divider(color: AppColors.divider),
+            Divider(color: theme.dividerColor),
         itemBuilder: (context, index) {
           final hearing = hearings[index];
           return Card(
-            color: AppColors.cardBackground,
+            color: theme.cardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: theme.dividerColor),
             ),
             elevation: 3,
             child: Padding(
@@ -69,28 +78,36 @@ class _OnlineMeetingScreenState extends State<OnlineMeetingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 🔹 Case ID
                   Text(
                     "Case: ${hearing["caseId"]}",
-                    style: const TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
-                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 8),
+
+                  // 🔹 Hearing Info
                   Text("Date: ${hearing["date"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   Text("Time: ${hearing["time"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   Text("Judge: ${hearing["judge"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
+
                   const SizedBox(height: 10),
+
+                  // 🔹 Status + Join Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Status: ${hearing["status"]}",
-                        style: TextStyle(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: _statusColor(hearing["status"]!),
                           fontWeight: FontWeight.w600,
                         ),

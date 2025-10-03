@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Calculators/ArbitrationCalculatorScreen.dart';
 import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Dashboard_Home/CommonDashboardScreen.dart';
 import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Dashboard_Home/SideMenuDeshboard.dart';
 import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Help_&_Support/HelpSupportScreen.dart';
@@ -46,16 +47,14 @@ class DashboardScreen extends StatefulWidget {
     required this.menuItems,
   });
 
-  /// ✅ Factory: Common + Role-Specific Menus
   factory DashboardScreen.forRole({
     required String userName,
     required String role,
   }) {
     final combinedMenu = [
-      ...RoleMenus.common, // always include common menus
-      ..._roleSpecificMenus(role), // role-specific
+      ...RoleMenus.common,
+      ..._roleSpecificMenus(role),
     ];
-
     return DashboardScreen(
       userName: userName,
       role: role,
@@ -63,7 +62,6 @@ class DashboardScreen extends StatefulWidget {
     );
   }
 
-  /// ✅ Helper for role-specific menus
   static List<MenuItemData> _roleSpecificMenus(String role) {
     switch (role.toLowerCase()) {
       case 'admin':
@@ -88,18 +86,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return LayoutBuilder(
       builder: (_, c) {
         final wide = c.maxWidth >= 700;
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: theme.scaffoldBackgroundColor,
           appBar: wide
               ? null
               : AppBar(
                   backgroundColor: AppColors.accentOrange,
+                  elevation: 2,
                   title: Text(
                     widget.menuItems[_selected].title,
-                    style: const TextStyle(color: AppColors.buttonTextLight),
+                    style: textTheme.titleLarge?.copyWith(
+                      color: theme.brightness == Brightness.dark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.buttonTextLight,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
           drawer: wide
@@ -124,7 +131,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   userRole: widget.role,
                   userName: widget.userName,
                 ),
-              Expanded(child: _content()),
+              Expanded(child: _content(context)),
             ],
           ),
         );
@@ -132,9 +139,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  /// Right content
-  Widget _content() {
+  Widget _content(BuildContext context) {
     final title = widget.menuItems[_selected].title;
+
     return Column(
       children: [
         Expanded(
@@ -142,18 +149,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(6),
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(8),
                 boxShadow: const [
                   BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2)),
+                    color: Colors.black12,
+                    blurRadius: 6,
+                    offset: Offset(0, 3),
+                  ),
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: _buildSection(title),
+                padding: const EdgeInsets.all(12),
+                child: _buildSection(context, title),
               ),
             ),
           ),
@@ -162,34 +170,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  /// ✅ Route mapping
-  /// ✅ Route mapping
-  Widget _buildSection(String title) {
+  Widget _buildSection(BuildContext context, String title) {
     final role = widget.role.toLowerCase();
 
-    // 🔹 Common screens
+    // Common
     switch (title) {
       case 'Dashboard / Home':
         return CommonDashboardScreen(
           role: widget.role,
           userName: widget.userName,
         );
-
       case 'Notifications (updates, alerts, case assignments)':
         return const NotificationsScreen();
-
       case 'Profile & Settings':
         return ProfileSettingsScreen(
           userName: widget.userName,
           role: widget.role,
-          email: "user@email.com", // TODO: replace with actual logged-in email
+          email: "user@email.com",
         );
-
       case 'Help & Support':
         return const HelpSupportScreen();
+      case 'Arbitration Calculators':
+        return const ArbitrationCalculatorScreen();
     }
 
-    // 🔹 Admin
+    // Admin
     if (role == "admin") {
       switch (title) {
         case 'Users Management':
@@ -215,7 +220,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
     }
 
-    // 🔹 Respondent
+    // Respondent
     if (role == "respondent") {
       switch (title) {
         case 'Case Details / Submissions':
@@ -231,7 +236,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
     }
 
-    // 🔹 Claimant
+    // Claimant
     if (role == "claimant") {
       switch (title) {
         case 'Communication':
@@ -251,7 +256,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
     }
 
-    // 🔹 Neutral
+    // Neutral
     if (role == "neutral") {
       switch (title) {
         case 'Assigned Cases Overview':
@@ -265,23 +270,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
     }
 
-    return _defaultSection(title); // ✅ always returns Widget
+    return _defaultSection(context, title);
   }
 
-  Widget _defaultSection(String t) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            t,
-            style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary),
+  Widget _defaultSection(BuildContext context, String t) {
+    final theme = Theme.of(context);
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          t,
+          style: textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary
+                : AppColors.primary,
           ),
-          Divider(color: AppColors.divider),
-          const SizedBox(height: 8),
-          const Text('-',
-              style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-        ],
-      );
+        ),
+        Divider(color: Theme.of(context).dividerColor),
+        const SizedBox(height: 8),
+        Text(
+          '-',
+          style: textTheme.bodyMedium?.copyWith(
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary
+                : AppColors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
 }

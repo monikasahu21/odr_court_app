@@ -45,7 +45,7 @@ class _UploadOrdersAwardsNotesScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("$type uploaded successfully"),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.successGreen,
       ),
     );
   }
@@ -59,7 +59,7 @@ class _UploadOrdersAwardsNotesScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("Removed $fileName"),
-        backgroundColor: AppColors.accentOrange,
+        backgroundColor: AppColors.errorRed,
       ),
     );
   }
@@ -82,48 +82,59 @@ class _UploadOrdersAwardsNotesScreenState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       body: uploads.isEmpty
-          ? const Center(
+          ? Center(
               child: Text(
                 "No uploads yet.",
-                style: TextStyle(color: AppColors.textSecondary),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
             )
           : ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: uploads.length,
               separatorBuilder: (context, index) =>
-                  const Divider(color: AppColors.divider),
+                  Divider(color: theme.dividerColor),
               itemBuilder: (context, index) {
                 final doc = uploads[index];
                 return Card(
-                  color: AppColors.cardBackground,
+                  color: theme.cardColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    side: const BorderSide(color: AppColors.divider),
+                    side: BorderSide(color: theme.dividerColor),
                   ),
                   elevation: 2,
                   child: ListTile(
-                    leading: Icon(
-                      doc["type"] == "Order"
-                          ? Icons.gavel
-                          : doc["type"] == "Award"
-                              ? Icons.workspace_premium
-                              : Icons.note_alt,
-                      color: AppColors.iconDefault,
+                    leading: CircleAvatar(
+                      radius: 22,
+                      backgroundColor: AppColors.primary.withOpacity(0.15),
+                      child: Icon(
+                        doc["type"] == "Order"
+                            ? Icons.gavel
+                            : doc["type"] == "Award"
+                                ? Icons.workspace_premium
+                                : Icons.note_alt,
+                        color: AppColors.primary,
+                      ),
                     ),
                     title: Text(
                       doc["title"]!,
-                      style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w600),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     subtitle: Text(
                       "Type: ${doc["type"]}\nDate: ${doc["date"]}",
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -142,8 +153,8 @@ class _UploadOrdersAwardsNotesScreenState
                           },
                         ),
                         IconButton(
-                          icon:
-                              const Icon(Icons.delete, color: Colors.redAccent),
+                          icon: const Icon(Icons.delete,
+                              color: AppColors.errorRed),
                           tooltip: "Remove",
                           onPressed: () => _removeDocument(index),
                         ),
@@ -154,7 +165,7 @@ class _UploadOrdersAwardsNotesScreenState
               },
             ),
 
-      // ✅ Floating Action Button with AppColors.primary
+      // ✅ Floating Action Button with theme colors
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
         onPressed: () => _showUploadMenu(context),

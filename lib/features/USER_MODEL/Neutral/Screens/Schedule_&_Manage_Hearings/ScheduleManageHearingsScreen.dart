@@ -35,6 +35,7 @@ class _ScheduleManageHearingsScreenState
     },
   ];
 
+  /// 🔹 Schedule new hearing dialog
   void _scheduleNewHearing() {
     String? caseId, judge;
     DateTime? selectedDate;
@@ -43,31 +44,42 @@ class _ScheduleManageHearingsScreenState
     showDialog(
       context: context,
       builder: (context) {
+        final theme = Theme.of(context);
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: AppColors.cardBackground,
-              title: const Text("Schedule Hearing",
-                  style: TextStyle(color: AppColors.textPrimary)),
+              backgroundColor: theme.cardColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                "Schedule Hearing",
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   children: [
                     TextField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Case ID",
-                        border: OutlineInputBorder(),
+                        labelStyle: theme.textTheme.bodyMedium,
+                        border: const OutlineInputBorder(),
                       ),
                       onChanged: (val) => caseId = val,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     TextField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: "Judge Name",
-                        border: OutlineInputBorder(),
+                        labelStyle: theme.textTheme.bodyMedium,
+                        border: const OutlineInputBorder(),
                       ),
                       onChanged: (val) => judge = val,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
@@ -75,6 +87,7 @@ class _ScheduleManageHearingsScreenState
                             selectedDate == null
                                 ? "Select Date"
                                 : "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}",
+                            style: theme.textTheme.bodyMedium,
                           ),
                         ),
                         IconButton(
@@ -101,6 +114,7 @@ class _ScheduleManageHearingsScreenState
                             selectedTime == null
                                 ? "Select Time"
                                 : selectedTime!.format(context),
+                            style: theme.textTheme.bodyMedium,
                           ),
                         ),
                         IconButton(
@@ -123,15 +137,17 @@ class _ScheduleManageHearingsScreenState
               ),
               actions: [
                 TextButton(
-                  child: const Text("Cancel",
-                      style: TextStyle(color: AppColors.textSecondary)),
+                  child: Text("Cancel",
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   onPressed: () => Navigator.pop(context),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary),
-                  child: const Text("Save",
-                      style: TextStyle(color: AppColors.buttonTextLight)),
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.buttonTextLight,
+                  ),
+                  child: const Text("Save"),
                   onPressed: () {
                     if (caseId != null &&
                         judge != null &&
@@ -159,6 +175,7 @@ class _ScheduleManageHearingsScreenState
     );
   }
 
+  /// 🔹 Cancel hearing
   void _cancelHearing(int index) {
     setState(() {
       hearings[index]["status"] = "Cancelled";
@@ -168,19 +185,20 @@ class _ScheduleManageHearingsScreenState
       SnackBar(
         content: Text(
             "Hearing for ${hearings[index]["caseId"]} has been cancelled."),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: AppColors.errorRed,
       ),
     );
   }
 
+  /// 🔹 Status colors
   Color _statusColor(String status) {
     switch (status) {
       case "Scheduled":
         return AppColors.primary;
       case "Completed":
-        return Colors.green;
+        return AppColors.successGreen;
       case "Cancelled":
-        return Colors.redAccent;
+        return AppColors.errorRed;
       default:
         return AppColors.textSecondary;
     }
@@ -188,21 +206,33 @@ class _ScheduleManageHearingsScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    final theme = Theme.of(context);
 
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          "Manage Hearings",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: AppColors.primary,
+        centerTitle: true,
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: hearings.length,
         separatorBuilder: (context, index) =>
-            const Divider(color: AppColors.divider),
+            Divider(color: theme.dividerColor),
         itemBuilder: (context, index) {
           final hearing = hearings[index];
           return Card(
-            color: AppColors.cardBackground,
+            color: theme.cardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: theme.dividerColor),
             ),
             elevation: 3,
             child: Padding(
@@ -212,23 +242,25 @@ class _ScheduleManageHearingsScreenState
                 children: [
                   Text(
                     "Case: ${hearing["caseId"]}",
-                    style: const TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
-                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text("Date: ${hearing["date"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   Text("Time: ${hearing["time"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   Text("Judge: ${hearing["judge"]}",
-                      style: const TextStyle(color: AppColors.textSecondary)),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   const SizedBox(height: 8),
                   Text(
                     "Status: ${hearing["status"]}",
-                    style: TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       color: _statusColor(hearing["status"]!),
                       fontWeight: FontWeight.w600,
                     ),
@@ -239,9 +271,15 @@ class _ScheduleManageHearingsScreenState
                     children: [
                       if (hearing["status"] == "Scheduled")
                         TextButton.icon(
-                          icon: const Icon(Icons.cancel, color: Colors.red),
-                          label: const Text("Cancel",
-                              style: TextStyle(color: Colors.red)),
+                          icon: const Icon(Icons.cancel,
+                              color: AppColors.errorRed),
+                          label: Text(
+                            "Cancel",
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppColors.errorRed,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                           onPressed: () => _cancelHearing(index),
                         ),
                     ],

@@ -56,6 +56,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     // ✅ Apply filter
     final filtered = selectedFilter == "All"
         ? allNotifications
@@ -63,23 +65,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             .where((n) => n.type == selectedFilter.toLowerCase())
             .toList();
 
-    // ✅ Group notifications into Today, Yesterday, Earlier
-    final today = filtered
-        .where((n) =>
-            n.dateTime.day == DateTime.now().day &&
-            n.dateTime.month == DateTime.now().month &&
-            n.dateTime.year == DateTime.now().year)
-        .toList();
+    // ✅ Group notifications
+    final today = filtered.where((n) {
+      final now = DateTime.now();
+      return n.dateTime.day == now.day &&
+          n.dateTime.month == now.month &&
+          n.dateTime.year == now.year;
+    }).toList();
 
-    final yesterday = filtered
-        .where((n) =>
-            n.dateTime.day ==
-                DateTime.now().subtract(const Duration(days: 1)).day &&
-            n.dateTime.month ==
-                DateTime.now().subtract(const Duration(days: 1)).month &&
-            n.dateTime.year ==
-                DateTime.now().subtract(const Duration(days: 1)).year)
-        .toList();
+    final yesterday = filtered.where((n) {
+      final y = DateTime.now().subtract(const Duration(days: 1));
+      return n.dateTime.day == y.day &&
+          n.dateTime.month == y.month &&
+          n.dateTime.year == y.year;
+    }).toList();
 
     final earlier = filtered
         .where((n) => n.dateTime
@@ -87,24 +86,28 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         .toList();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
-          _buildFilterBar(),
+          _buildFilterBar(theme),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(12),
               children: [
-                if (today.isNotEmpty) _buildSection("Today", today),
-                if (yesterday.isNotEmpty) _buildSection("Yesterday", yesterday),
-                if (earlier.isNotEmpty) _buildSection("Earlier", earlier),
+                if (today.isNotEmpty) _buildSection("Today", today, theme),
+                if (yesterday.isNotEmpty)
+                  _buildSection("Yesterday", yesterday, theme),
+                if (earlier.isNotEmpty)
+                  _buildSection("Earlier", earlier, theme),
                 if (today.isEmpty && yesterday.isEmpty && earlier.isEmpty)
-                  const Center(
+                  Center(
                     child: Padding(
-                      padding: EdgeInsets.only(top: 100),
+                      padding: const EdgeInsets.only(top: 100),
                       child: Text(
                         "No notifications available",
-                        style: TextStyle(color: AppColors.textSecondary),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
                   ),
@@ -117,7 +120,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   /// 🔹 Filter bar with ChoiceChips
-  Widget _buildFilterBar() {
+  Widget _buildFilterBar(ThemeData theme) {
     final filters = ["All", "Alert", "Case", "Update"];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -132,10 +135,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 label: Text(filter),
                 selected: isSelected,
                 selectedColor: AppColors.accentOrange,
+                backgroundColor: theme.cardColor,
                 labelStyle: TextStyle(
-                  color: isSelected
-                      ? AppColors.buttonTextLight
-                      : AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  color: theme.brightness == Brightness.dark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.primary,
                 ),
                 onSelected: (_) {
                   setState(() {
@@ -150,8 +155,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  /// 🔹 Section builder (e.g., Today, Yesterday, Earlier)
-  Widget _buildSection(String title, List<NotificationItem> items) {
+  /// 🔹 Section builder
+  Widget _buildSection(
+      String title, List<NotificationItem> items, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -159,22 +165,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
           child: Text(
             title,
-            style: const TextStyle(
-              fontSize: 16,
+            style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: theme.brightness == Brightness.dark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.textPrimary,
             ),
           ),
         ),
-        ...items.map((item) => _buildNotificationCard(item)).toList(),
+        ...items.map((item) => _buildNotificationCard(item, theme)).toList(),
       ],
     );
   }
 
   /// 🔹 Notification card UI
-  Widget _buildNotificationCard(NotificationItem item) {
+  Widget _buildNotificationCard(NotificationItem item, ThemeData theme) {
     return Card(
-      color: AppColors.cardBackground,
+      color: theme.cardColor,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       elevation: 3,
@@ -184,29 +191,44 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           backgroundColor: _getIconBackground(item.type),
           child: Icon(
             _getIcon(item.type),
-            color: Colors.white,
+            color: AppColors.buttonTextLight,
           ),
         ),
         title: Text(
           item.title,
-          style: const TextStyle(
+          style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary
+                : AppColors.primary,
           ),
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
             item.message,
-            style: const TextStyle(color: AppColors.textSecondary),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.brightness == Brightness.dark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.primary,
+            ),
           ),
         ),
         trailing: Text(
           _formatTime(item.dateTime),
-          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary
+                : AppColors.primary,
+          ),
         ),
         onTap: () {
-          // 👉 Handle tap (e.g., navigate to case details)
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => NotificationDetailScreen(notification: item),
+            ),
+          );
         },
       ),
     );
@@ -229,11 +251,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Color _getIconBackground(String type) {
     switch (type) {
       case "alert":
-        return Colors.redAccent;
+        return AppColors.errorRed;
       case "case":
         return AppColors.primary;
       case "update":
-        return Colors.green;
+        return AppColors.successGreen;
       default:
         return AppColors.iconDefault;
     }
@@ -250,5 +272,98 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     } else {
       return "${diff.inDays}d ago";
     }
+  }
+}
+
+/// 🔹 Detail Screen for Notification
+class NotificationDetailScreen extends StatelessWidget {
+  final NotificationItem notification;
+
+  const NotificationDetailScreen({super.key, required this.notification});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        title: Text(
+          notification.title,
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary
+                : AppColors.primary,
+          ),
+        ),
+      ),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Card(
+          elevation: 3,
+          color: theme.cardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: AppColors.primary.withOpacity(0.15),
+                      child: const Icon(Icons.notifications,
+                          color: AppColors.primary),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        notification.title,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.brightness == Brightness.dark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  notification.message,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.brightness == Brightness.dark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  "Type: ${notification.type.toUpperCase()}",
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.brightness == Brightness.dark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Received: ${notification.dateTime}",
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.brightness == Brightness.dark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

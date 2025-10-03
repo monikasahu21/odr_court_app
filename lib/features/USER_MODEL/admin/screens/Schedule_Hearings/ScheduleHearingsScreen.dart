@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odr_court_app/features/auth/Reusable_Widget/app_color.dart';
 
 class ScheduleHearingsScreen extends StatefulWidget {
   const ScheduleHearingsScreen({super.key});
@@ -35,36 +36,42 @@ class _ScheduleHearingsScreenState extends State<ScheduleHearingsScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        final theme = Theme.of(context);
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text("Schedule Hearing"),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                "Schedule Hearing",
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   children: [
-                    TextField(
-                      decoration: const InputDecoration(labelText: "Case ID"),
-                      onChanged: (val) => caseId = val,
-                    ),
-                    TextField(
-                      decoration:
-                          const InputDecoration(labelText: "Parties Involved"),
-                      onChanged: (val) => parties = val,
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(labelText: "Judge"),
-                      onChanged: (val) => judge = val,
-                    ),
+                    _buildTextField("Case ID", (val) => caseId = val),
+                    _buildTextField("Parties Involved", (val) => parties = val),
+                    _buildTextField("Judge", (val) => judge = val),
                     const SizedBox(height: 10),
                     Row(
                       children: [
                         Expanded(
-                          child: Text(selectedDate == null
-                              ? "Select Date"
-                              : "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"),
+                          child: Text(
+                            selectedDate == null
+                                ? "Select Date"
+                                : "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}",
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.calendar_today),
+                          icon: const Icon(Icons.calendar_today,
+                              color: AppColors.primary),
                           onPressed: () async {
                             final picked = await showDatePicker(
                               context: context,
@@ -82,12 +89,18 @@ class _ScheduleHearingsScreenState extends State<ScheduleHearingsScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(selectedTime == null
-                              ? "Select Time"
-                              : selectedTime!.format(context)),
+                          child: Text(
+                            selectedTime == null
+                                ? "Select Time"
+                                : selectedTime!.format(context),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.access_time),
+                          icon: const Icon(Icons.access_time,
+                              color: AppColors.primary),
                           onPressed: () async {
                             final picked = await showTimePicker(
                               context: context,
@@ -100,16 +113,15 @@ class _ScheduleHearingsScreenState extends State<ScheduleHearingsScreen> {
                         ),
                       ],
                     ),
-                    TextField(
-                      decoration: const InputDecoration(labelText: "Remarks"),
-                      onChanged: (val) => remarks = val,
-                    ),
+                    _buildTextField("Remarks", (val) => remarks = val),
                   ],
                 ),
               ),
               actions: [
                 TextButton(
-                  child: const Text("Cancel"),
+                  child: Text("Cancel",
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.textSecondary)),
                   onPressed: () => Navigator.pop(context),
                 ),
                 ElevatedButton(
@@ -150,48 +162,69 @@ class _ScheduleHearingsScreenState extends State<ScheduleHearingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Schedule Hearings"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _addHearing,
+        title: Text(
+          "Schedule Hearings",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
           ),
-        ],
+        ),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
-          headingRowColor: MaterialStateProperty.all(Colors.grey[200]),
-          columns: const [
-            DataColumn(label: Text("Case ID")),
-            DataColumn(label: Text("Parties")),
-            DataColumn(label: Text("Date")),
-            DataColumn(label: Text("Time")),
-            DataColumn(label: Text("Judge")),
-            DataColumn(label: Text("Status")),
-            DataColumn(label: Text("Actions")),
+          headingRowColor:
+              WidgetStateProperty.all(AppColors.primary.withOpacity(0.1)),
+          columns: [
+            _buildColumn("Case ID", theme),
+            _buildColumn("Parties", theme),
+            _buildColumn("Date", theme),
+            _buildColumn("Time", theme),
+            _buildColumn("Judge", theme),
+            _buildColumn("Status", theme),
+            _buildColumn("Actions", theme),
           ],
           rows: List.generate(hearings.length, (index) {
             final hearing = hearings[index];
             return DataRow(cells: [
-              DataCell(Text(hearing["caseId"]!)),
-              DataCell(Text(hearing["parties"]!)),
-              DataCell(Text(hearing["date"]!)),
-              DataCell(Text(hearing["time"]!)),
-              DataCell(Text(hearing["judge"]!)),
-              DataCell(Text(hearing["status"]!)),
+              DataCell(Text(hearing["caseId"]!,
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textPrimary))),
+              DataCell(Text(hearing["parties"]!,
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary))),
+              DataCell(Text(hearing["date"]!,
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary))),
+              DataCell(Text(hearing["time"]!,
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary))),
+              DataCell(Text(hearing["judge"]!,
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary))),
+              DataCell(Text(
+                hearing["status"]!,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.green,
+                  fontWeight: FontWeight.w600,
+                ),
+              )),
               DataCell(Row(
                 children: [
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.blue),
+                    tooltip: "Edit Hearing",
                     onPressed: () {
-                      // Edit functionality can be added here
+                      // TODO: Implement edit
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
+                    tooltip: "Delete Hearing",
                     onPressed: () => _deleteHearing(index),
                   ),
                 ],
@@ -199,6 +232,31 @@ class _ScheduleHearingsScreenState extends State<ScheduleHearingsScreen> {
             ]);
           }),
         ),
+      ),
+    );
+  }
+
+  DataColumn _buildColumn(String title, ThemeData theme) {
+    return DataColumn(
+      label: Text(
+        title,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, Function(String) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: TextField(
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        onChanged: onChanged,
       ),
     );
   }

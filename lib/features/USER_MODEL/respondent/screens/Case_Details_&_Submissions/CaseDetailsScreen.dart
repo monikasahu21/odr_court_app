@@ -37,104 +37,127 @@ class _CaseDetailsScreenState extends State<CaseDetailsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("Response uploaded successfully"),
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.successGreen,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text("Case Details"),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.buttonTextLight,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // 🔹 Case Information Card
+            /// 🔹 Case Information Card
             Card(
-              color: AppColors.cardBackground,
+              color: theme.cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(color: AppColors.divider),
+                side: BorderSide(color: theme.dividerColor),
               ),
               elevation: 3,
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       "Case ID: C-101",
-                      style: TextStyle(
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     Text("Claimant: Amit Sharma",
-                        style: TextStyle(color: AppColors.textSecondary)),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        )),
                     Text("Respondent: Priya Singh",
-                        style: TextStyle(color: AppColors.textSecondary)),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        )),
                     Text("Filed On: 12 Sep 2025",
-                        style: TextStyle(color: AppColors.textSecondary)),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        )),
                     Text("Status: Under Review",
-                        style: TextStyle(color: AppColors.accentOrange)),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.accentOrange,
+                          fontWeight: FontWeight.w600,
+                        )),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 20),
 
-            // 🔹 Submissions Header
+            /// 🔹 Submissions Header
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 "Submissions",
-                style: TextStyle(
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
-                  fontSize: 16,
                 ),
               ),
             ),
             const SizedBox(height: 10),
 
-            // 🔹 Submissions List
+            /// 🔹 Submissions List
             Expanded(
               child: submissions.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
                         "No submissions yet.",
-                        style: TextStyle(color: AppColors.textSecondary),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     )
                   : ListView.separated(
                       itemCount: submissions.length,
                       separatorBuilder: (context, index) =>
-                          const Divider(color: AppColors.divider),
+                          Divider(color: theme.dividerColor),
                       itemBuilder: (context, index) {
                         final sub = submissions[index];
                         return Card(
-                          color: AppColors.cardBackground,
-                          elevation: 1,
+                          color: theme.cardColor,
+                          elevation: 2,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: const BorderSide(color: AppColors.divider),
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(color: theme.dividerColor),
                           ),
                           child: ListTile(
-                            leading: const Icon(Icons.description,
-                                color: AppColors.iconDefault),
+                            leading: CircleAvatar(
+                              radius: 22,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.15),
+                              child: const Icon(Icons.description,
+                                  color: AppColors.primary),
+                            ),
                             title: Text(
                               sub["title"]!,
-                              style: const TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w500),
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
                             ),
                             subtitle: Text(
                               "By: ${sub["submittedBy"]}\nDate: ${sub["date"]}",
-                              style: const TextStyle(
-                                  color: AppColors.textSecondary),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.download,
@@ -157,18 +180,15 @@ class _CaseDetailsScreenState extends State<CaseDetailsScreen> {
 
             const SizedBox(height: 10),
 
-            // 🔹 Upload Response Button
+            /// 🔹 Upload Response Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.upload_file,
-                    color: AppColors.buttonTextLight),
-                label: const Text(
-                  "Upload Response",
-                  style: TextStyle(color: AppColors.buttonTextLight),
-                ),
+                icon: const Icon(Icons.upload_file),
+                label: const Text("Upload Response"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.buttonTextLight,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),

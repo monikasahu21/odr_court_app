@@ -33,14 +33,15 @@ class _EventsScheduleScreenState extends State<EventsScheduleScreen> {
     },
   ];
 
+  /// 🔹 Status colors mapped with AppColors
   Color _statusColor(String status) {
     switch (status) {
       case "Upcoming":
         return AppColors.primary;
       case "Completed":
-        return Colors.green;
+        return AppColors.successGreen;
       case "Cancelled":
-        return Colors.redAccent;
+        return AppColors.errorRed;
       default:
         return AppColors.textSecondary;
     }
@@ -48,75 +49,91 @@ class _EventsScheduleScreenState extends State<EventsScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text("Events Schedule"),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.buttonTextLight,
+        elevation: 2,
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: events.length,
         separatorBuilder: (context, index) =>
-            const Divider(color: AppColors.divider),
+            Divider(color: theme.dividerColor),
         itemBuilder: (context, index) {
           final event = events[index];
           return Card(
-            color: AppColors.cardBackground,
+            color: theme.cardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: AppColors.divider),
+              side: BorderSide(color: theme.dividerColor),
             ),
             elevation: 3,
             child: ListTile(
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              leading: Icon(
-                event["type"] == "Hearing" ? Icons.gavel : Icons.people,
-                color: AppColors.iconDefault,
+              leading: CircleAvatar(
+                radius: 24,
+                backgroundColor: AppColors.primary.withOpacity(0.15),
+                child: Icon(
+                  event["type"] == "Hearing" ? Icons.gavel : Icons.people,
+                  color: AppColors.primary,
+                ),
               ),
               title: Text(
                 event["title"]!,
-                style: const TextStyle(
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 6),
-                  Text(
-                    "Date: ${event["date"]} | Time: ${event["time"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
-                  Text(
-                    "Type: ${event["type"]}",
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
-                  Text(
-                    "Status: ${event["status"]}",
-                    style: TextStyle(
-                      color: _statusColor(event["status"]!),
-                      fontWeight: FontWeight.w600,
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Date: ${event["date"]} | Time: ${event["time"]}",
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                    Text(
+                      "Type: ${event["type"]}",
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    Text(
+                      "Status: ${event["status"]}",
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: _statusColor(event["status"]!),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               trailing: event["status"] == "Upcoming"
                   ? ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.buttonTextLight,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        "View",
-                        style: TextStyle(color: AppColors.buttonTextLight),
-                      ),
+                      child: const Text("View"),
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
                                 "Opening details for ${event["title"]}..."),
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: AppColors.accentOrange,
                           ),
                         );
                       },

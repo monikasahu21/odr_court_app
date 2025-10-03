@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odr_court_app/features/auth/Reusable_Widget/app_color.dart';
 
 class ServiceRequestsScreen extends StatefulWidget {
   const ServiceRequestsScreen({super.key});
@@ -48,8 +49,14 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        final theme = Theme.of(context);
         return AlertDialog(
-          title: Text("Respond to ${requests[index]['reqId']}"),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            "Respond to ${requests[index]['reqId']}",
+            style: theme.textTheme.titleLarge,
+          ),
           content: TextField(
             maxLines: 4,
             decoration: const InputDecoration(
@@ -61,7 +68,9 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text("Cancel"),
+              child: Text("Cancel",
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary)),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
@@ -80,8 +89,22 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
     );
   }
 
+  Color _statusColor(String status) {
+    switch (status) {
+      case "Pending":
+        return Colors.orange;
+      case "In Progress":
+        return Colors.blue;
+      case "Resolved":
+        return Colors.green;
+      default:
+        return AppColors.textSecondary;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final filteredRequests = requests
         .where((r) =>
             r["reqId"]!.toLowerCase().contains(searchQuery.toLowerCase()) ||
@@ -91,8 +114,15 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
         .toList();
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Service Requests"),
+        title: Text(
+          "Service Requests",
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: AppColors.buttonTextLight,
+          ),
+        ),
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -102,9 +132,15 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
             child: TextField(
               decoration: InputDecoration(
                 hintText: "Search by Request ID, User, Subject, or Status",
-                prefixIcon: const Icon(Icons.search),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                hintStyle: theme.textTheme.bodyMedium
+                    ?.copyWith(color: AppColors.textSecondary),
+                prefixIcon:
+                    const Icon(Icons.search, color: AppColors.iconDefault),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: theme.cardColor,
               ),
               onChanged: (val) {
                 setState(() {
@@ -119,30 +155,47 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
-                headingRowColor: MaterialStateProperty.all(Colors.grey[200]),
-                columns: const [
-                  DataColumn(label: Text("Request ID")),
-                  DataColumn(label: Text("User")),
-                  DataColumn(label: Text("Subject")),
-                  DataColumn(label: Text("Date")),
-                  DataColumn(label: Text("Status")),
-                  DataColumn(label: Text("Response")),
-                  DataColumn(label: Text("Actions")),
+                headingRowColor:
+                    WidgetStatePropertyAll(AppColors.primary.withOpacity(0.08)),
+                columns: [
+                  _buildColumn("Request ID", theme),
+                  _buildColumn("User", theme),
+                  _buildColumn("Subject", theme),
+                  _buildColumn("Date", theme),
+                  _buildColumn("Status", theme),
+                  _buildColumn("Response", theme),
+                  _buildColumn("Actions", theme),
                 ],
                 rows: List.generate(filteredRequests.length, (index) {
                   final req = filteredRequests[index];
                   return DataRow(cells: [
-                    DataCell(Text(req["reqId"]!)),
-                    DataCell(Text(req["user"]!)),
-                    DataCell(Text(req["subject"]!)),
-                    DataCell(Text(req["date"]!)),
-                    DataCell(Text(req["status"]!)),
+                    DataCell(Text(req["reqId"]!,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: AppColors.textPrimary))),
+                    DataCell(Text(req["user"]!,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: AppColors.textSecondary))),
+                    DataCell(Text(req["subject"]!,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: AppColors.textSecondary))),
+                    DataCell(Text(req["date"]!,
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: AppColors.textSecondary))),
+                    DataCell(Text(
+                      req["status"]!,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: _statusColor(req["status"]!),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
                     DataCell(Text(
                       req["response"]!.isEmpty
                           ? "No response yet"
                           : req["response"]!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(color: AppColors.textSecondary),
                     )),
                     DataCell(Row(
                       children: [
@@ -165,7 +218,8 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
                                 value: "Resolved",
                                 child: Text("Mark Resolved")),
                           ],
-                          child: const Icon(Icons.more_vert),
+                          child: const Icon(Icons.more_vert,
+                              color: AppColors.iconDefault),
                         ),
                       ],
                     )),
@@ -175,6 +229,18 @@ class _ServiceRequestsScreenState extends State<ServiceRequestsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  DataColumn _buildColumn(String title, ThemeData theme) {
+    return DataColumn(
+      label: Text(
+        title,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
       ),
     );
   }

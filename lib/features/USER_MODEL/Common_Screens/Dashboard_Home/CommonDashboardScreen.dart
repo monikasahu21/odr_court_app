@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odr_court_app/features/USER_MODEL/Common_Screens/Dashboard_Home/NotificationDetailScreen.dart';
 import 'package:odr_court_app/features/auth/Reusable_Widget/app_color.dart';
 
 /// Common Dashboard Screen for Admin, Claimant, Respondent, Neutral
@@ -16,43 +17,19 @@ class CommonDashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final stats = _getStatsForRole(role);
     final notifications = _getNotificationsForRole(role);
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 👋 Welcome Banner
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.accentOrange,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.dashboard, color: Colors.white, size: 36),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Welcome, $userName 👋",
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      "$role Dashboard",
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                  ],
-                ),
-              ),
+              _buildWelcomeBanner(context, userName, role),
               const SizedBox(height: 24),
 
               // 🔹 Quick Stats Grid
@@ -68,42 +45,63 @@ class CommonDashboardScreen extends StatelessWidget {
                 itemCount: stats.length,
                 itemBuilder: (context, index) {
                   final stat = stats[index];
-                  return _buildStatCard(
-                    stat['title']!,
-                    stat['count']!,
-                    stat['icon'] as IconData,
-                    stat['color'] as Color,
+                  return InkWell(
+                    onTap: () {
+                      // TODO: Add navigation logic per role
+                    },
+                    child: _buildStatCard(
+                      context,
+                      stat['title']!,
+                      stat['count']!,
+                      stat['icon'] as IconData,
+                      stat['color'] as Color,
+                    ),
                   );
                 },
               ),
               const SizedBox(height: 24),
 
               // 🔹 Upcoming Hearings
-              const Text(
+              Text(
                 "📅 Upcoming Hearings",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary),
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.brightness == Brightness.dark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 12),
-              _buildHearingTile("Case #2024-45", "25 Sep 2025", "10:30 AM",
-                  "Virtual Courtroom"),
-              _buildHearingTile("Case #2024-52", "28 Sep 2025", "2:00 PM",
-                  "District Court - Room 3"),
+              _buildHearingTile(
+                context,
+                "Case #2024-45",
+                "25 Sep 2025",
+                "10:30 AM",
+                "Virtual Courtroom",
+              ),
+              _buildHearingTile(
+                context,
+                "Case #2024-52",
+                "28 Sep 2025",
+                "2:00 PM",
+                "District Court - Room 3",
+              ),
               const SizedBox(height: 24),
 
               // 🔹 Notifications
-              const Text(
+              Text(
                 "🔔 Recent Notifications",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary),
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.brightness == Brightness.dark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 12),
+
               for (var notification in notifications)
-                _buildNotificationTile(notification),
+                _buildNotificationTile(context, notification),
             ],
           ),
         ),
@@ -111,13 +109,85 @@ class CommonDashboardScreen extends StatelessWidget {
     );
   }
 
-  /// 🔹 Stat Card
-  Widget _buildStatCard(
-      String title, String count, IconData icon, Color color) {
+  /// 🔹 Welcome Banner
+  Widget _buildWelcomeBanner(
+      BuildContext context, String userName, String role) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.accentOrange],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.dashboard_rounded,
+              color: AppColors.buttonTextLight,
+              size: 40,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Welcome, $userName 👋",
+                  style: textTheme.titleLarge?.copyWith(
+                    color: theme.brightness == Brightness.dark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.buttonTextLight,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "$role Dashboard",
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: theme.brightness == Brightness.dark
+                        ? AppColors.darkTextPrimary.withOpacity(0.7)
+                        : Colors.white70,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🔹 Stat Card
+  Widget _buildStatCard(BuildContext context, String title, String count,
+      IconData icon, Color color) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -132,22 +202,34 @@ class CommonDashboardScreen extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 36),
           const SizedBox(height: 5),
-          Text(count,
-              style: TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            count,
+            style: textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
           const SizedBox(height: 5),
-          Text(title,
-              textAlign: TextAlign.center,
-              style:
-                  const TextStyle(fontSize: 14, color: AppColors.textPrimary)),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: textTheme.bodyMedium?.copyWith(
+              color: theme.brightness == Brightness.dark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.textSecondary,
+            ),
+          ),
         ],
       ),
     );
   }
 
   /// 🔹 Hearing Tile
-  Widget _buildHearingTile(
-      String caseId, String date, String time, String venue) {
+  Widget _buildHearingTile(BuildContext context, String caseId, String date,
+      String time, String venue) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       elevation: 2,
@@ -155,20 +237,40 @@ class CommonDashboardScreen extends StatelessWidget {
       child: ListTile(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        leading:
-            const Icon(Icons.gavel, color: AppColors.accentOrange, size: 32),
-        title: Text(caseId,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-        subtitle: Text("$date • $time\n$venue",
-            style: const TextStyle(color: AppColors.textSecondary)),
+        leading: const Icon(
+          Icons.gavel,
+          color: AppColors.accentOrange,
+          size: 32,
+        ),
+        title: Text(
+          caseId,
+          style: textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary
+                : AppColors.textPrimary,
+          ),
+        ),
+        subtitle: Text(
+          "$date • $time\n$venue",
+          style: textTheme.bodyMedium?.copyWith(
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary.withOpacity(0.7)
+                : AppColors.textSecondary,
+          ),
+          maxLines: 2,
+        ),
         isThreeLine: true,
       ),
     );
   }
 
   /// 🔹 Notification Tile
-  Widget _buildNotificationTile(Map<String, String> notification) {
+  Widget _buildNotificationTile(
+      BuildContext context, Map<String, String> notification) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       elevation: 2,
@@ -178,13 +280,32 @@ class CommonDashboardScreen extends StatelessWidget {
           backgroundColor: AppColors.primary,
           child: Icon(Icons.notifications, color: Colors.white),
         ),
-        title: Text(notification["title"]!,
-            style: const TextStyle(
-                fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+        title: Text(
+          notification["title"]!,
+          style: textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary
+                : AppColors.textPrimary,
+          ),
+        ),
         subtitle: Text(
           "${notification["caseId"]} • ${notification["date"]}",
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: textTheme.bodyMedium?.copyWith(
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkTextPrimary.withOpacity(0.7)
+                : AppColors.textSecondary,
+          ),
         ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  NotificationDetailScreen(notification: notification),
+            ),
+          );
+        },
       ),
     );
   }
@@ -285,12 +406,12 @@ class CommonDashboardScreen extends StatelessWidget {
       {
         "title": "New submission received",
         "caseId": "Case #2024-45",
-        "date": "20 Sep 2025",
+        "date": "20 Sep 2025"
       },
       {
         "title": "Order uploaded",
         "caseId": "Case #2024-50",
-        "date": "18 Sep 2025",
+        "date": "18 Sep 2025"
       },
     ];
   }
